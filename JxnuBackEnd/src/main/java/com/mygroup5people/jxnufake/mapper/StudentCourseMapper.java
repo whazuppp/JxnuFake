@@ -1,0 +1,16 @@
+package com.mygroup5people.jxnufake.mapper;
+
+import com.mygroup5people.jxnufake.vo.OfferingVO;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import java.util.List;
+
+@Mapper
+public interface StudentCourseMapper {
+    OfferingVO lockOffering(Integer offeringId);
+    Integer countSelectedOffering(@Param("studentId") Integer studentId, @Param("offeringId") Integer offeringId);
+    Integer countSelectedCourse(@Param("studentId") Integer studentId, @Param("courseId") Integer courseId);
+    void insert(@Param("studentId") Integer studentId, @Param("offeringId") Integer offeringId);
+    Integer deleteOwned(@Param("studentId") Integer studentId, @Param("offeringId") Integer offeringId);
+    List<OfferingVO> listSelections(@Param("studentId") Integer studentId, @Param("semesterId") Integer semesterId);
+}

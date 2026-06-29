@@ -5,6 +5,7 @@ import com.mygroup5people.jxnufake.pojo.LoginInfo;
 import com.mygroup5people.jxnufake.pojo.Stu;
 import com.mygroup5people.jxnufake.service.StuService;
 import com.mygroup5people.jxnufake.utils.JwtUtils;
+import com.mygroup5people.jxnufake.vo.StudentInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,6 +70,11 @@ public LoginInfo login(Stu stu) {
     @Override
     public Stu getById(Integer id) {
         return stuMapper.getById(id);
+    }
+
+    @Override
+    public StudentInfoVO getInfo(Integer id) {
+        return stuMapper.getInfoById(id);
     }
 
 }

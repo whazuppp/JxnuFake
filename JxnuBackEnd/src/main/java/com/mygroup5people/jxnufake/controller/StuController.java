@@ -1,10 +1,9 @@
 package com.mygroup5people.jxnufake.controller;
 
 import com.mygroup5people.jxnufake.pojo.Result;
-import com.mygroup5people.jxnufake.pojo.Stu;
 import com.mygroup5people.jxnufake.service.StuService;
 import com.mygroup5people.jxnufake.utils.AliOSSUtils;
-import com.mygroup5people.jxnufake.utils.JwtUtils;
+import com.mygroup5people.jxnufake.utils.CurrentStudent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,9 +25,7 @@ public class StuController {
         log.info("头像上传：{}", file.getOriginalFilename());
 
         // 从 token 中解析当前学生 ID
-        String token = request.getHeader("token");
-        Map<String, Object> claims = JwtUtils.parseToken(token);
-        Integer stuId = (Integer) claims.get("id");
+        Integer stuId = CurrentStudent.id(request);
 
         // 上传图片至 OSS
         String imageUrl = ali.upload(file);
@@ -45,8 +42,7 @@ public class StuController {
         String newPassword = map.get("newPassword");
 
         // 从 token 中解析当前登录学生 id
-        Map<String, Object> claims = JwtUtils.parseToken(request.getHeader("token"));
-        Integer stuId = (Integer) claims.get("id");
+        Integer stuId = CurrentStudent.id(request);
 
         boolean updated = stuService.changePassword(stuId, oldPassword, newPassword);
         if (updated) {
@@ -56,9 +52,8 @@ public class StuController {
         }
     }
     @GetMapping("/student/info")
-    public Result getStudentInfo(@RequestParam("id") Integer id) {
-        Stu stu = stuService.getById(id);
-        return Result.success(stu);
+    public Result getStudentInfo(HttpServletRequest request) {
+        return Result.success(stuService.getInfo(CurrentStudent.id(request)));
     }
 
 

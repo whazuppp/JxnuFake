@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mygroup5people.jxnufake.mapper.StudentCourseMapper">
+    <sql id="columns">
+        o.id,o.course_id,c.course_code,c.name course_name,c.course_type,c.credit,c.weekly_periods,
+        o.teacher_id,t.teacher_no,t.name teacher_name,o.class_id,ac.class_name,
+        o.semester_id,sem.name semester_name,o.capacity,
+        (select count(*) from student_course total where total.offering_id=o.id) student_count
+    </sql>
+    <sql id="joins">
+        from course_offering o join course c on c.id=o.course_id join teacher t on t.id=o.teacher_id
+        join administrative_class ac on ac.id=o.class_id join semester sem on sem.id=o.semester_id
+    </sql>
+    <select id="lockOffering" resultType="com.mygroup5people.jxnufake.vo.OfferingVO">
+        select <include refid="columns"/> <include refid="joins"/> where o.id=#{offeringId} for update
+    </select>
+    <select id="countSelectedOffering" resultType="java.lang.Integer">
+        select count(*) from student_course where student_id=#{studentId} and offering_id=#{offeringId}
+    </select>
+    <select id="countSelectedCourse" resultType="java.lang.Integer">
+        select count(*) from student_course sc join course_offering o on o.id=sc.offering_id
+        where sc.student_id=#{studentId} and o.course_id=#{courseId}
+    </select>
+    <insert id="insert">
+        insert into student_course(student_id,offering_id,create_time,update_time)
+        values(#{studentId},#{offeringId},now(),now())
+    </insert>
+    <delete id="deleteOwned">
+        delete from student_course where student_id=#{studentId} and offering_id=#{offeringId}
+    </delete>
+    <select id="listSelections" resultType="com.mygroup5people.jxnufake.vo.OfferingVO">
+        select <include refid="columns"/> <include refid="joins"/>
+        join student_course selected on selected.offering_id=o.id
+        where selected.student_id=#{studentId} and o.semester_id=#{semesterId}
+        order by c.course_code
+    </select>
+</mapper>

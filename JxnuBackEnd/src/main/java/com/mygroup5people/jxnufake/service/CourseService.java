@@ -1,6 +1,7 @@
 package com.mygroup5people.jxnufake.service;
 
-import com.mygroup5people.jxnufake.pojo.Course;
+import com.mygroup5people.jxnufake.dto.CourseRequest;
+import com.mygroup5people.jxnufake.entity.Course;
 
 import java.util.List;
 
@@ -9,9 +10,9 @@ public interface CourseService {
 
     Course selectById(Integer id);
 
-    void insert(Course course);
+    Course insert(CourseRequest request);
 
-    void update(Course course);
+    Course update(Integer id, CourseRequest request);
 
     void delete(Integer id);
 }

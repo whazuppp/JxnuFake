@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mygroup5people.jxnufake.mapper.ReferenceMapper">
+    <select id="listSemesters" resultType="com.mygroup5people.jxnufake.entity.Semester">
+        select id, academic_year, term_no, name, start_date, end_date, is_current as current
+        from semester order by start_date desc
+    </select>
+    <select id="listClasses" resultType="com.mygroup5people.jxnufake.entity.AdministrativeClass">
+        select id, class_code, class_name, create_time, update_time
+        from administrative_class order by class_code
+    </select>
+    <select id="listClassrooms" resultType="com.mygroup5people.jxnufake.entity.Classroom">
+        select id, building, room_no, capacity from classroom order by building, room_no
+    </select>
+    <select id="listClassPeriods" resultType="com.mygroup5people.jxnufake.entity.ClassPeriod">
+        select period_no, day_part, start_time, end_time from class_period order by period_no
+    </select>
+    <select id="selectSemesterById" resultType="com.mygroup5people.jxnufake.entity.Semester">
+        select id, academic_year, term_no, name, start_date, end_date, is_current as current
+        from semester where id = #{id}
+    </select>
+    <select id="selectClassById" resultType="com.mygroup5people.jxnufake.entity.AdministrativeClass">
+        select id, class_code, class_name, create_time, update_time
+        from administrative_class where id = #{id}
+    </select>
+    <select id="selectClassroomById" resultType="com.mygroup5people.jxnufake.entity.Classroom">
+        select id, building, room_no, capacity from classroom where id = #{id}
+    </select>
+</mapper>

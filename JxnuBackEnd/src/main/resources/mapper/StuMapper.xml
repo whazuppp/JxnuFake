@@ -23,6 +23,14 @@
         where id = #{id}
     </select>
 
+    <select id="getInfoById" resultType="com.mygroup5people.jxnufake.vo.StudentInfoVO">
+        select s.id, s.username, s.name, s.gender, s.image, s.entrydate,
+               s.stu_id, s.class_id, ac.class_name
+        from student s
+        join administrative_class ac on ac.id = s.class_id
+        where s.id = #{id}
+    </select>
+
     <update id="updateImageById">
         update jxnu.student
         set image = #{image}

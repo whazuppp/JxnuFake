@@ -65,6 +65,7 @@ import QuestionBoxView from '@/views/studenthome/questionbox.vue';
 import ExamArrangeView from '@/views/studenthome/examarrange.vue';
 import DoubleMajorView from '@/views/studenthome/doublemajor.vue';
 import OutSchoolView from '@/views/studenthome/outschool.vue';
+import { readLoginUser } from '@/utils/auth';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -72,6 +73,7 @@ const router = createRouter({
     {
       path: '/',
       component: LayoutView,
+      meta: { requiresAuth: true },
       redirect: '/index',
       children: [
         { path: 'index', name: 'home', component: HomeView },
@@ -79,6 +81,7 @@ const router = createRouter({
         {
           path: 'studenthome',
           component: StudentHomeView,
+          redirect: '/studenthome/schedule',
           children: [
             { path: 'schedule', component: ScheduleView },
             { path: 'baseinfo', component: BaseInfoView },
@@ -164,8 +167,15 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView
-    }
+    },
+    { path: '/:pathMatch(.*)*', redirect: '/index' }
   ]
 });
+
+router.beforeEach((to) => {
+  const authenticated = Boolean(readLoginUser()?.token)
+  if (to.matched.some(record => record.meta.requiresAuth) && !authenticated) return '/login'
+  if (to.path === '/login' && authenticated) return '/studenthome/schedule'
+})
 
 export default router;

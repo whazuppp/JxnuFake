@@ -83,18 +83,16 @@ import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { getStudentInfoApi, uploadAvatarApi } from '@/api/stu'
+import { readLoginUser } from '@/utils/auth'
 
 const avatarUrl = ref('')
-const studentId = ref(null)
 
 onMounted(async () => {
-  const user = JSON.parse(localStorage.getItem('loginUser'))
+  const user = readLoginUser()
   if (!user) return
 
-  studentId.value = user.id
-
   try {
-    const result = await getStudentInfoApi(user.id)
+    const result = await getStudentInfoApi()
     if (result.code === 1) {
       avatarUrl.value = result.data?.image || ''
       localStorage.setItem(
@@ -121,7 +119,7 @@ const uploadAvatar = async ({ file }) => {
 const handleUploadSuccess = (response) => {
   if (response && response.code === 1) {
     avatarUrl.value = response.data
-    const user = JSON.parse(localStorage.getItem('loginUser')) || {}
+    const user = readLoginUser() || {}
     localStorage.setItem('loginUser', JSON.stringify({ ...user, image: response.data }))
     ElMessage.success('头像上传成功')
   } else {
@@ -148,7 +146,8 @@ const beforeUpload = (file) => {
 <style scoped>
 .student-home-layout {
   display: flex;
-  height: calc(100vh - 200px);
+  min-height: calc(100vh - 200px);
+  min-width: 0;
 }
 
 .sidebar {
@@ -158,6 +157,7 @@ const beforeUpload = (file) => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: auto;
 }
 
 .avatar-container {
@@ -194,6 +194,12 @@ const beforeUpload = (file) => {
   padding: 20px;
   background-color: #fff;
   overflow: auto;
+  min-width: 0;
+}
+
+@media (max-width: 760px) {
+  .student-home-layout { flex-direction: column; }
+  .sidebar { width: 100% !important; max-height: 360px; }
 }
 
 .button-group {

@@ -1,6 +1,6 @@
 package com.mygroup5people.jxnufake.mapper;
 
-import com.mygroup5people.jxnufake.pojo.Course;
+import com.mygroup5people.jxnufake.entity.Course;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -16,4 +16,6 @@ public interface CourseMapper {
     void update(Course course);
 
     void delete(Integer id);
+
+    Integer countOfferings(Integer id);
 }
