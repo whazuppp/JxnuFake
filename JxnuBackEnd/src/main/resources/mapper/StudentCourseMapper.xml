@@ -20,7 +20,7 @@
     </select>
     <select id="countSelectedCourse" resultType="java.lang.Integer">
         select count(*) from student_course sc join course_offering o on o.id=sc.offering_id
-        where sc.student_id=#{studentId} and o.course_id=#{courseId}
+        where sc.student_id=#{studentId} and o.course_id=#{courseId} and o.semester_id=#{semesterId}
     </select>
     <insert id="insert">
         insert into student_course(student_id,offering_id,create_time,update_time)

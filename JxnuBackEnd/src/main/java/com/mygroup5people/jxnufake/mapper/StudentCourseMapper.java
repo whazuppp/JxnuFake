@@ -9,7 +9,8 @@ import java.util.List;
 public interface StudentCourseMapper {
     OfferingVO lockOffering(Integer offeringId);
     Integer countSelectedOffering(@Param("studentId") Integer studentId, @Param("offeringId") Integer offeringId);
-    Integer countSelectedCourse(@Param("studentId") Integer studentId, @Param("courseId") Integer courseId);
+    Integer countSelectedCourse(@Param("studentId") Integer studentId, @Param("courseId") Integer courseId,
+                                @Param("semesterId") Integer semesterId);
     void insert(@Param("studentId") Integer studentId, @Param("offeringId") Integer offeringId);
     Integer deleteOwned(@Param("studentId") Integer studentId, @Param("offeringId") Integer offeringId);
     List<OfferingVO> listSelections(@Param("studentId") Integer studentId, @Param("semesterId") Integer semesterId);

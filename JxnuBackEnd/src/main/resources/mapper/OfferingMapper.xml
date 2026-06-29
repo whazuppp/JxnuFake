@@ -71,7 +71,12 @@
         select count(*) from student_course where student_id=#{studentId} and offering_id=#{offeringId}
     </select>
     <select id="listStudents" resultType="com.mygroup5people.jxnufake.vo.StudentSummaryVO">
-        select s.id,s.stu_id student_no,s.name,s.gender,ac.class_name,s.image
+        select s.id,
+               s.stu_id as studentNo,
+               s.name,
+               s.gender,
+               ac.class_name as className,
+               s.image as image
         from student_course sc join student s on s.id=sc.student_id
         join administrative_class ac on ac.id=s.class_id
         where sc.offering_id=#{offeringId} order by s.stu_id

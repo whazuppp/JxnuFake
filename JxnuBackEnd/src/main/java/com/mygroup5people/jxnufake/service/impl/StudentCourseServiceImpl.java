@@ -37,7 +37,7 @@ public class StudentCourseServiceImpl implements StudentCourseService {
         if (offering == null) throw new BusinessException("开课班不存在");
         if (studentCourseMapper.countSelectedOffering(studentId, offeringId) > 0)
             throw new BusinessException("不能重复选择同一开课班");
-        if (studentCourseMapper.countSelectedCourse(studentId, offering.getCourseId()) > 0)
+        if (studentCourseMapper.countSelectedCourse(studentId, offering.getCourseId(), offering.getSemesterId()) > 0)
             throw new BusinessException("同一课程只能选择一个开课班");
         if (offering.getStudentCount() >= offering.getCapacity())
             throw new BusinessException("课程容量已满");

@@ -2,6 +2,10 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
+const schemaMigration = readFileSync(
+  fileURLToPath(new URL('../../../sql/01-migrate-schema.sql', import.meta.url)),
+  'utf8'
+)
 const referenceSeed = readFileSync(
   fileURLToPath(new URL('../../../sql/02-seed-reference-data.sql', import.meta.url)),
   'utf8'
@@ -37,5 +41,9 @@ describe('课程表种子数据', () => {
   it('为两个学期的全部种子开课班建立选课关系', () => {
     expect(enrollmentSeed).toContain("sem.academic_year = '2025-2026'")
     expect(enrollmentSeed).not.toContain("c.course_code = '262516'")
+  })
+
+  it('只限制同一学期内重复选择同一课程，避免第一学期选课被其他学期拦截', () => {
+    expect(schemaMigration).toContain('selected_offering.semester_id = new_offering.semester_id')
   })
 })

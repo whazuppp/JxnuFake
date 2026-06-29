@@ -28,16 +28,17 @@ class StudentCourseServiceImplTest {
 
     @Test
     void selectsAvailableOffering() {
-        when(studentCourseMapper.lockOffering(12)).thenReturn(offering(12, 8, 60, 35));
+        when(studentCourseMapper.lockOffering(12)).thenReturn(offering(12, 8, 1, 60, 35));
 
         service.select(7, 12);
 
+        verify(studentCourseMapper).countSelectedCourse(7, 8, 1);
         verify(studentCourseMapper).insert(7, 12);
     }
 
     @Test
     void rejectsFullOffering() {
-        when(studentCourseMapper.lockOffering(12)).thenReturn(offering(12, 8, 60, 60));
+        when(studentCourseMapper.lockOffering(12)).thenReturn(offering(12, 8, 1, 60, 60));
 
         BusinessException error = assertThrows(BusinessException.class, () -> service.select(7, 12));
 
@@ -47,7 +48,7 @@ class StudentCourseServiceImplTest {
 
     @Test
     void rejectsDuplicateOffering() {
-        when(studentCourseMapper.lockOffering(12)).thenReturn(offering(12, 8, 60, 35));
+        when(studentCourseMapper.lockOffering(12)).thenReturn(offering(12, 8, 1, 60, 35));
         when(studentCourseMapper.countSelectedOffering(7, 12)).thenReturn(1);
 
         BusinessException error = assertThrows(BusinessException.class, () -> service.select(7, 12));
@@ -56,9 +57,9 @@ class StudentCourseServiceImplTest {
     }
 
     @Test
-    void rejectsSameCourseThroughAnotherOffering() {
-        when(studentCourseMapper.lockOffering(12)).thenReturn(offering(12, 8, 60, 35));
-        when(studentCourseMapper.countSelectedCourse(7, 8)).thenReturn(1);
+    void rejectsSameCourseThroughAnotherOfferingInSameSemester() {
+        when(studentCourseMapper.lockOffering(12)).thenReturn(offering(12, 8, 1, 60, 35));
+        when(studentCourseMapper.countSelectedCourse(7, 8, 1)).thenReturn(1);
 
         BusinessException error = assertThrows(BusinessException.class, () -> service.select(7, 12));
 
@@ -74,10 +75,11 @@ class StudentCourseServiceImplTest {
         assertEquals("未选择该开课班，无法退课", error.getMessage());
     }
 
-    private OfferingVO offering(int id, int courseId, int capacity, int studentCount) {
+    private OfferingVO offering(int id, int courseId, int semesterId, int capacity, int studentCount) {
         OfferingVO offering = new OfferingVO();
         offering.setId(id);
         offering.setCourseId(courseId);
+        offering.setSemesterId(semesterId);
         offering.setCapacity(capacity);
         offering.setStudentCount(studentCount);
         return offering;
