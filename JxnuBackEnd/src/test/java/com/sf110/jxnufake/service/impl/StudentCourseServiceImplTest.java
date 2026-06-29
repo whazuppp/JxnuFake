@@ -20,11 +20,20 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class StudentCourseServiceImplTest {
-    @Mock private StudentCourseMapper studentCourseMapper;
-    @Mock private OfferingMapper offeringMapper;
-    @Mock private StuMapper stuMapper;
-    @Mock private ReferenceMapper referenceMapper;
-    @InjectMocks private StudentCourseServiceImpl service;
+    @Mock
+    private StudentCourseMapper studentCourseMapper;
+
+    @Mock
+    private OfferingMapper offeringMapper;
+
+    @Mock
+    private StuMapper stuMapper;
+
+    @Mock
+    private ReferenceMapper referenceMapper;
+
+    @InjectMocks
+    private StudentCourseServiceImpl service;
 
     @Test
     void selectsAvailableOffering() {
@@ -32,7 +41,7 @@ class StudentCourseServiceImplTest {
 
         service.select(7, 12);
 
-        verify(studentCourseMapper).countSelectedCourse(7, 8, 1);
+        verify(studentCourseMapper).countSelectedCourseInSemester(7, 8, 1);
         verify(studentCourseMapper).insert(7, 12);
     }
 
@@ -54,16 +63,18 @@ class StudentCourseServiceImplTest {
         BusinessException error = assertThrows(BusinessException.class, () -> service.select(7, 12));
 
         assertEquals("不能重复选择同一开课班", error.getMessage());
+        verify(studentCourseMapper, never()).insert(7, 12);
     }
 
     @Test
-    void rejectsSameCourseThroughAnotherOfferingInSameSemester() {
+    void rejectsSameCourseOnlyInSameSemester() {
         when(studentCourseMapper.lockOffering(12)).thenReturn(offering(12, 8, 1, 60, 35));
-        when(studentCourseMapper.countSelectedCourse(7, 8, 1)).thenReturn(1);
+        when(studentCourseMapper.countSelectedCourseInSemester(7, 8, 1)).thenReturn(1);
 
         BusinessException error = assertThrows(BusinessException.class, () -> service.select(7, 12));
 
-        assertEquals("同一课程只能选择一个开课班", error.getMessage());
+        assertEquals("同一学期内同一课程只能选择一个开课班", error.getMessage());
+        verify(studentCourseMapper, never()).insert(7, 12);
     }
 
     @Test

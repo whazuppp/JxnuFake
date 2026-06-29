@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Slf4j
@@ -34,29 +35,51 @@ public class StudentCourseServiceImpl implements StudentCourseService {
     @Transactional
     public void select(Integer studentId, Integer offeringId) {
         OfferingVO offering = studentCourseMapper.lockOffering(offeringId);
-        if (offering == null) throw new BusinessException("开课班不存在");
-        if (studentCourseMapper.countSelectedOffering(studentId, offeringId) > 0)
+
+        if (offering == null) {
+            throw new BusinessException("开课班不存在");
+        }
+
+        if (studentCourseMapper.countSelectedOffering(studentId, offeringId) > 0) {
             throw new BusinessException("不能重复选择同一开课班");
-        if (studentCourseMapper.countSelectedCourse(studentId, offering.getCourseId(), offering.getSemesterId()) > 0)
-            throw new BusinessException("同一课程只能选择一个开课班");
-        if (offering.getStudentCount() >= offering.getCapacity())
+        }
+
+        if (studentCourseMapper.countSelectedCourseInSemester(
+                studentId,
+                offering.getCourseId(),
+                offering.getSemesterId()
+        ) > 0) {
+            throw new BusinessException("同一学期内同一课程只能选择一个开课班");
+        }
+
+        if (offering.getStudentCount() >= offering.getCapacity()) {
             throw new BusinessException("课程容量已满");
+        }
+
         studentCourseMapper.insert(studentId, offeringId);
         log.info("学生 {} 选择开课班 {}", studentId, offeringId);
     }
 
     @Transactional
     public void withdraw(Integer studentId, Integer offeringId) {
-        if (studentCourseMapper.deleteOwned(studentId, offeringId) == 0)
+        if (studentCourseMapper.deleteOwned(studentId, offeringId) == 0) {
             throw new BusinessException("未选择该开课班，无法退课");
+        }
+
         log.info("学生 {} 退出开课班 {}", studentId, offeringId);
     }
 
     public TimetableVO timetable(Integer studentId, Integer semesterId) {
         StudentInfoVO student = stuMapper.getInfoById(studentId);
-        if (student == null) throw new BusinessException("学生不存在");
+        if (student == null) {
+            throw new BusinessException("学生不存在");
+        }
+
         Semester semester = referenceMapper.selectSemesterById(semesterId);
-        if (semester == null) throw new BusinessException("学期不存在");
+        if (semester == null) {
+            throw new BusinessException("学期不存在");
+        }
+
         TimetableVO result = new TimetableVO();
         result.setStudentId(student.id());
         result.setStudentNo(student.stuId());
