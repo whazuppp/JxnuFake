@@ -29,9 +29,8 @@
           <el-menu-item index="/studenthome/academicrecord">学籍档案</el-menu-item>
           <el-menu-item index="/studenthome/newteacher">新生导师</el-menu-item>
           <el-menu-item index="/studenthome/coursefeedback">课程反馈</el-menu-item>
-          <el-menu-item index="/studenthome/parentinfo">家长信息</el-menu-item>
           <el-menu-item index="/studenthome/dualdegree">双专业双学位课程</el-menu-item>
-          <el-menu-item index="/studenthome/relatedapply">相关申请</el-menu-item>
+          <el-menu-item index="/studenthome/relatedapply">相片更换申请</el-menu-item>
           <el-menu-item index="/studenthome/learningexp">学习体验</el-menu-item>
         </el-sub-menu>
 

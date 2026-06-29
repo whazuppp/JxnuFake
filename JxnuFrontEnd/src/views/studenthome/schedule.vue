@@ -11,7 +11,6 @@
     <template v-else>
       <header class="page-header">
         <div>
-          <p class="eyebrow">STUDENT TIMETABLE</p>
           <h2>江西师范大学学生课程表</h2>
         </div>
         <label class="semester-picker">
@@ -196,13 +195,6 @@ onMounted(async () => {
   border-bottom: 1px solid #dfe6ec;
 }
 
-.eyebrow {
-  margin: 0 0 4px;
-  color: #1e799a;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-}
 
 h2 {
   margin: 0;
