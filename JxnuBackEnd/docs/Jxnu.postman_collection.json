@@ -1,0 +1,335 @@
+﻿{
+  "info": {
+    "_postman_id": "a1f2e0d0-9a8d-4e62-9c8d-7f5b7d0a0001",
+    "name": "Jxnu 前后端联调接口",
+    "description": "根据 Jxnu Spring Boot 3 后端与 Vue3 前端整理的 Postman Collection。先执行“学生登录”，成功后会自动保存 token 和 studentId 到当前 Postman Environment。",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. 登录",
+      "item": [
+        {
+          "name": "学生登录",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('业务登录成功', function () { pm.expect(json.code).to.eql(1); });",
+                  "if (json && json.data) {",
+                  "  pm.environment.set('token', json.data.token || '');",
+                  "  pm.environment.set('studentId', json.data.id || '');",
+                  "  pm.environment.set('stuId', json.data.stuId || '');",
+                  "  pm.environment.set('username', json.data.username || '');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stuId\": \"{{loginStuId}}\",\n  \"password\": \"{{loginPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/stu/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stu",
+                "login"
+              ]
+            },
+            "description": "登录成功后自动保存 `token`、`studentId`、`stuId` 到当前环境。"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. 学生",
+      "item": [
+        {
+          "name": "查询学生信息",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/student/info?id={{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "student",
+                "info"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "{{studentId}}"
+                }
+              ]
+            },
+            "description": "查询当前登录学生信息。注意：参数 `id` 是学生主键 ID，不是学号。"
+          },
+          "response": []
+        },
+        {
+          "name": "上传学生头像",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "{{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/stu/uploadAvatar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stu",
+                "uploadAvatar"
+              ]
+            },
+            "description": "在 Postman 的 Body -> form-data 中，为 `file` 选择一张 JPG/PNG 图片后再发送。"
+          },
+          "response": []
+        },
+        {
+          "name": "修改密码",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "token",
+                "value": "{{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldPassword\": \"{{oldPassword}}\",\n  \"newPassword\": \"{{newPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/stu/changePassword",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stu",
+                "changePassword"
+              ]
+            },
+            "description": "会真实修改数据库密码。联调时建议使用测试账号，或发送前确认环境变量 `oldPassword`、`newPassword`。"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. 课程",
+      "item": [
+        {
+          "name": "查询课程列表",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "查询课程详情",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{courseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{courseId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "新增课程",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.test('新增课程业务成功', function () { pm.expect(json.code).to.eql(1); });",
+                  "if (json && json.data && json.data.id) {",
+                  "  pm.environment.set('courseId', json.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "token",
+                "value": "{{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman联调课程\",\n  \"number\": 4,\n  \"teacherName\": \"测试教师\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            },
+            "description": "当前后端新增课程未配置自增 ID 回填，因此响应中的 `id` 可能为空。如为空，请先查询课程列表，再手动设置环境变量 `courseId`。"
+          },
+          "response": []
+        },
+        {
+          "name": "修改课程",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "token",
+                "value": "{{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{courseId}},\n  \"name\": \"Postman联调课程-已修改\",\n  \"number\": 3,\n  \"teacherName\": \"测试教师\",\n  \"createTime\": \"{{courseCreateTime}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            },
+            "description": "当前后端更新 SQL 会同时更新 `create_time`，所以这里保留 `courseCreateTime` 变量，避免创建时间被置空。"
+          },
+          "response": []
+        },
+        {
+          "name": "删除课程",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{courseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{courseId}}"
+              ]
+            },
+            "description": "会真实删除数据库课程。发送前请确认 `courseId` 指向测试数据。"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
+

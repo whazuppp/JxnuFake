@@ -1,4 +1,4 @@
-# Jxnu 项目接口文档
+﻿# Jxnu 项目接口文档
 
 ## 统一说明
 
@@ -32,35 +32,40 @@
 
 ---
 
-## 1. 学生登录接口
+# 1. 学生登录接口
 
-### 基本信息
+## 基本信息
 
 - 请求路径：`/stu/login`
 - 前端路径：`/api/stu/login`
 - 请求方式：`POST`
+- 前端方法：`loginApi(data)`
 - 接口描述：学生账号登录，成功后返回学生信息和 token
 - 是否需要 token：否
 
-### 请求参数
+## 请求参数
 
 - 参数格式：`application/json`
+- 参数说明：
 
 | 参数名称 | 参数类型 | 是否必须 | 示例 | 备注 |
 | --- | --- | --- | --- | --- |
-| stuId | string/number | 是 | `202326202065` | 学号，对应数据库 `stu_id` |
+| stuId | string/number | 是 | `20240001` | 学号，后端通过 `stu_id` 查询 |
 | password | string | 是 | `123456` | 密码 |
 
 请求示例：
 
 ```json
 {
-  "stuId": "202326202065",
+  "stuId": "20240001",
   "password": "123456"
 }
 ```
 
-### 响应数据
+## 响应数据
+
+- 参数格式：`application/json`
+- 参数说明：
 
 | 参数名 | 类型 | 是否必须 | 备注 |
 | --- | --- | --- | --- |
@@ -68,9 +73,9 @@
 | msg | string | 非必须 | 提示信息 |
 | data | object | 非必须 | 登录成功后的学生信息 |
 | data.id | number | 是 | 学生主键 ID |
-| data.stuId | string/number | 是 | 学号 |
 | data.username | string | 是 | 用户名 |
 | data.name | string | 是 | 姓名 |
+| data.stuId | string | 是 | 学号 |
 | data.token | string | 是 | JWT 登录令牌 |
 
 响应数据样例：
@@ -80,10 +85,10 @@
   "code": 1,
   "msg": "success",
   "data": {
-    "id": 2,
-    "stuId": 202326202065,
-    "username": "林",
-    "name": "林凯",
+    "id": 1,
+    "username": "zhangsan",
+    "name": "张三",
+    "stuId": "20240001",
     "token": "eyJhbGciOiJIUzI1NiJ9..."
   }
 }
@@ -101,32 +106,37 @@
 
 ---
 
-## 2. 查询学生信息接口
+# 2. 查询学生信息接口
 
-### 基本信息
+## 基本信息
 
 - 请求路径：`/student/info`
 - 前端路径：`/api/student/info?id={id}`
 - 请求方式：`GET`
+- 前端方法：`getStudentInfoApi(id)`
 - 接口描述：根据学生主键 ID 查询学生信息
 - 是否需要 token：是
 
-### 请求参数
+## 请求参数
 
 - 参数格式：`query string`
+- 参数说明：
 
 | 参数名称 | 参数类型 | 是否必须 | 示例 | 备注 |
 | --- | --- | --- | --- | --- |
-| id | number | 是 | `2` | 学生主键 ID，不是学号 |
+| id | number | 是 | `1` | 学生主键 ID，不是学号 |
 
 请求示例：
 
 ```http
-GET /student/info?id=2
+GET /student/info?id=1
 token: <JWT>
 ```
 
-### 响应数据
+## 响应数据
+
+- 参数格式：`application/json`
+- 参数说明：
 
 | 参数名 | 类型 | 是否必须 | 备注 |
 | --- | --- | --- | --- |
@@ -151,39 +161,41 @@ token: <JWT>
   "code": 1,
   "msg": "success",
   "data": {
-    "id": 2,
-    "username": "林",
+    "id": 1,
+    "username": "zhangsan",
     "password": "123456",
-    "name": "林凯",
+    "name": "张三",
     "gender": 1,
     "image": "https://example.com/avatar.jpg",
-    "entrydate": "2023-09-01",
-    "stuId": 202326202065,
-    "createTime": "2025-05-26T09:16:13",
-    "updateTime": "2025-05-26T09:16:13"
+    "entrydate": "2024-09-01",
+    "stuId": 20240001,
+    "createTime": "2024-09-01T10:00:00",
+    "updateTime": "2024-09-01T10:00:00"
   }
 }
 ```
 
 ---
 
-## 3. 上传学生头像接口
+# 3. 上传学生头像接口
 
-### 基本信息
+## 基本信息
 
 - 请求路径：`/stu/uploadAvatar`
 - 前端路径：`/api/stu/uploadAvatar`
 - 请求方式：`POST`
-- 接口描述：上传学生头像，上传成功后根据 token 中的学生 ID 更新数据库头像地址
+- 前端方法：`uploadAvatarApi(file)`
+- 接口描述：上传学生头像，上传成功后更新数据库头像地址
 - 是否需要 token：是
 
-### 请求参数
+## 请求参数
 
 - 参数格式：`multipart/form-data`
+- 参数说明：
 
 | 参数名称 | 参数类型 | 是否必须 | 示例 | 备注 |
 | --- | --- | --- | --- | --- |
-| file | file | 是 | 选择图片文件 | 后端参数名必须是 `file` |
+| file | file | 是 | 选择图片文件 | 后端参数名必须是 `file`，前端限制 JPG/PNG 且小于 10MB |
 
 请求示例：
 
@@ -195,7 +207,10 @@ Content-Type: multipart/form-data
 file=<图片文件>
 ```
 
-### 响应数据
+## 响应数据
+
+- 参数格式：`application/json`
+- 参数说明：
 
 | 参数名 | 类型 | 是否必须 | 备注 |
 | --- | --- | --- | --- |
@@ -215,19 +230,21 @@ file=<图片文件>
 
 ---
 
-## 4. 修改密码接口
+# 4. 修改密码接口
 
-### 基本信息
+## 基本信息
 
 - 请求路径：`/stu/changePassword`
 - 前端路径：`/api/stu/changePassword`
 - 请求方式：`POST`
+- 前端方法：`changePasswordApi(data)`
 - 接口描述：修改当前登录学生密码
 - 是否需要 token：是
 
-### 请求参数
+## 请求参数
 
 - 参数格式：`application/json`
+- 参数说明：
 
 | 参数名称 | 参数类型 | 是否必须 | 示例 | 备注 |
 | --- | --- | --- | --- | --- |
@@ -243,7 +260,10 @@ file=<图片文件>
 }
 ```
 
-### 响应数据
+## 响应数据
+
+- 参数格式：`application/json`
+- 参数说明：
 
 | 参数名 | 类型 | 是否必须 | 备注 |
 | --- | --- | --- | --- |
@@ -273,40 +293,26 @@ file=<图片文件>
 
 ---
 
-## 5. 查询课程列表接口
+# 5. 查询课程列表接口
 
-### 基本信息
+## 基本信息
 
 - 请求路径：`/courses`
 - 前端路径：`/api/courses`
 - 请求方式：`GET`
-- 接口描述：查询课程列表，支持按课程名称、授课教师、每周课时数动态查询
+- 前端方法：`queryAllCoursesApi()`
+- 接口描述：查询所有课程列表
 - 是否需要 token：是
 
-### 请求参数
+## 请求参数
 
-- 参数格式：`query string`
-- 参数说明：所有参数都是可选参数；不传参数时查询全部课程
+- 参数格式：无
+- 参数说明：无请求参数
 
-| 参数名称 | 参数类型 | 是否必须 | 示例 | 备注 |
-| --- | --- | --- | --- | --- |
-| name | string | 否 | `Java` | 按课程名称模糊查询 |
-| teacherName | string | 否 | `李老师` | 按授课教师模糊查询 |
-| number | number | 否 | `4` | 按每周课时数精确查询 |
+## 响应数据
 
-请求示例：
-
-```http
-GET /courses
-token: <JWT>
-```
-
-```http
-GET /courses?name=Java&teacherName=李老师&number=4
-token: <JWT>
-```
-
-### 响应数据
+- 参数格式：`application/json`
+- 参数说明：
 
 | 参数名 | 类型 | 是否必须 | 备注 |
 | --- | --- | --- | --- |
@@ -341,19 +347,21 @@ token: <JWT>
 
 ---
 
-## 6. 查询课程详情接口
+# 6. 查询课程详情接口
 
-### 基本信息
+## 基本信息
 
 - 请求路径：`/courses/{id}`
 - 前端路径：`/api/courses/{id}`
 - 请求方式：`GET`
+- 前端方法：`queryCourseByIdApi(id)`
 - 接口描述：根据课程 ID 查询课程详情
 - 是否需要 token：是
 
-### 请求参数
+## 请求参数
 
 - 参数格式：`path variable`
+- 参数说明：
 
 | 参数名称 | 参数类型 | 是否必须 | 示例 | 备注 |
 | --- | --- | --- | --- | --- |
@@ -366,7 +374,10 @@ GET /courses/1
 token: <JWT>
 ```
 
-### 响应数据
+## 响应数据
+
+- 参数格式：`application/json`
+- 参数说明：
 
 | 参数名 | 类型 | 是否必须 | 备注 |
 | --- | --- | --- | --- |
@@ -399,19 +410,21 @@ token: <JWT>
 
 ---
 
-## 7. 新增课程接口
+# 7. 新增课程接口
 
-### 基本信息
+## 基本信息
 
 - 请求路径：`/courses`
 - 前端路径：`/api/courses`
 - 请求方式：`POST`
+- 前端方法：`addCourseApi(data)`
 - 接口描述：新增课程
 - 是否需要 token：是
 
-### 请求参数
+## 请求参数
 
 - 参数格式：`application/json`
+- 参数说明：
 
 | 参数名称 | 参数类型 | 是否必须 | 示例 | 备注 |
 | --- | --- | --- | --- | --- |
@@ -429,14 +442,16 @@ token: <JWT>
 }
 ```
 
-### 响应数据
+## 响应数据
+
+- 参数格式：`application/json`
+- 参数说明：
 
 | 参数名 | 类型 | 是否必须 | 备注 |
 | --- | --- | --- | --- |
 | code | number | 必须 | `1` 成功，`0` 失败 |
 | msg | string | 非必须 | 提示信息 |
 | data | object | 非必须 | 新增的课程数据 |
-| data.id | number | 非必须 | 新增课程 ID，已配置自增 ID 回填 |
 | data.name | string | 是 | 课程名称 |
 | data.number | number | 是 | 每周课时数 |
 | data.teacherName | string | 是 | 授课教师 |
@@ -450,7 +465,6 @@ token: <JWT>
   "code": 1,
   "msg": "success",
   "data": {
-    "id": 1,
     "name": "Java 程序设计",
     "number": 4,
     "teacherName": "李老师",
@@ -460,28 +474,33 @@ token: <JWT>
 }
 ```
 
+备注：当前后端 Mapper 未配置自增 ID 回填，新增成功后的 `data.id` 可能为空。
+
 ---
 
-## 8. 修改课程接口
+# 8. 修改课程接口
 
-### 基本信息
+## 基本信息
 
 - 请求路径：`/courses`
 - 前端路径：`/api/courses`
 - 请求方式：`PUT`
+- 前端方法：`updateCourseApi(data)`
 - 接口描述：修改课程信息
 - 是否需要 token：是
 
-### 请求参数
+## 请求参数
 
 - 参数格式：`application/json`
+- 参数说明：
 
 | 参数名称 | 参数类型 | 是否必须 | 示例 | 备注 |
 | --- | --- | --- | --- | --- |
 | id | number | 是 | `1` | 课程 ID |
-| name | string | 否 | `Web 前端开发` | 课程名称，不传则不修改 |
-| number | number | 否 | `3` | 每周课时数，不传则不修改 |
-| teacherName | string | 否 | `王老师` | 授课教师，不传则不修改 |
+| name | string | 是 | `Web 前端开发` | 课程名称 |
+| number | number | 是 | `3` | 每周课时数 |
+| teacherName | string | 是 | `王老师` | 授课教师 |
+| createTime | string | 建议传 | `2024-09-01T10:00:00` | 当前后端 SQL 会更新 `create_time` |
 
 请求示例：
 
@@ -490,11 +509,15 @@ token: <JWT>
   "id": 1,
   "name": "Web 前端开发",
   "number": 3,
-  "teacherName": "王老师"
+  "teacherName": "王老师",
+  "createTime": "2024-09-01T10:00:00"
 }
 ```
 
-### 响应数据
+## 响应数据
+
+- 参数格式：`application/json`
+- 参数说明：
 
 | 参数名 | 类型 | 是否必须 | 备注 |
 | --- | --- | --- | --- |
@@ -502,9 +525,9 @@ token: <JWT>
 | msg | string | 非必须 | 提示信息 |
 | data | object | 非必须 | 修改后的课程数据 |
 | data.id | number | 是 | 课程 ID |
-| data.name | string | 非必须 | 课程名称 |
-| data.number | number | 非必须 | 每周课时数 |
-| data.teacherName | string | 非必须 | 授课教师 |
+| data.name | string | 是 | 课程名称 |
+| data.number | number | 是 | 每周课时数 |
+| data.teacherName | string | 是 | 授课教师 |
 | data.updateTime | string | 非必须 | 后端自动更新 |
 
 响应数据样例：
@@ -525,19 +548,21 @@ token: <JWT>
 
 ---
 
-## 9. 删除课程接口
+# 9. 删除课程接口
 
-### 基本信息
+## 基本信息
 
 - 请求路径：`/courses/{id}`
 - 前端路径：`/api/courses/{id}`
 - 请求方式：`DELETE`
+- 前端方法：`deleteCourseApi(id)`
 - 接口描述：根据课程 ID 删除课程
 - 是否需要 token：是
 
-### 请求参数
+## 请求参数
 
 - 参数格式：`path variable`
+- 参数说明：
 
 | 参数名称 | 参数类型 | 是否必须 | 示例 | 备注 |
 | --- | --- | --- | --- | --- |
@@ -550,7 +575,10 @@ DELETE /courses/1
 token: <JWT>
 ```
 
-### 响应数据
+## 响应数据
+
+- 参数格式：`application/json`
+- 参数说明：
 
 | 参数名 | 类型 | 是否必须 | 备注 |
 | --- | --- | --- | --- |
@@ -570,24 +598,16 @@ token: <JWT>
 
 ---
 
-## 接口总览
+# 接口总览
 
-| 模块 | 请求方式 | 请求路径 | 说明 |
-| --- | --- | --- | --- |
-| 登录 | POST | `/stu/login` | 学生登录 |
-| 学生 | GET | `/student/info` | 查询学生信息 |
-| 学生 | POST | `/stu/uploadAvatar` | 上传头像 |
-| 学生 | POST | `/stu/changePassword` | 修改密码 |
-| 课程 | GET | `/courses` | 查询课程列表，支持动态条件查询 |
-| 课程 | GET | `/courses/{id}` | 查询课程详情 |
-| 课程 | POST | `/courses` | 新增课程 |
-| 课程 | PUT | `/courses` | 修改课程 |
-| 课程 | DELETE | `/courses/{id}` | 删除课程 |
-
-## Apifox 调试建议
-
-1. 新建环境变量：`baseUrl = http://localhost:8082`。
-2. 登录接口请求地址写：`{{baseUrl}}/stu/login`。
-3. 登录成功后复制响应里的 `data.token`。
-4. 在需要登录的接口请求头中添加：`token: {{token}}`。
-5. 头像上传接口的 Body 选择 `form-data`，字段名必须为 `file`，类型选择文件。
+| 模块 | 请求方式 | 请求路径 | 前端方法 | 说明 |
+| --- | --- | --- | --- | --- |
+| 登录 | POST | `/stu/login` | `loginApi` | 学生登录 |
+| 学生 | GET | `/student/info` | `getStudentInfoApi` | 查询学生信息 |
+| 学生 | POST | `/stu/uploadAvatar` | `uploadAvatarApi` | 上传头像 |
+| 学生 | POST | `/stu/changePassword` | `changePasswordApi` | 修改密码 |
+| 课程 | GET | `/courses` | `queryAllCoursesApi` | 查询课程列表 |
+| 课程 | GET | `/courses/{id}` | `queryCourseByIdApi` | 查询课程详情 |
+| 课程 | POST | `/courses` | `addCourseApi` | 新增课程 |
+| 课程 | PUT | `/courses` | `updateCourseApi` | 修改课程 |
+| 课程 | DELETE | `/courses/{id}` | `deleteCourseApi` | 删除课程 |
