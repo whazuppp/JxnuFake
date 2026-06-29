@@ -1,0 +1,27 @@
+# IDE
+.idea/
+.vscode/
+.agents/
+.superpowers/
+*.iml
+
+# Java / Maven
+**/target/
+*.class
+*.log
+JxnuBackEnd/src/main/resources/application.properties
+
+# Node / Vite
+**/node_modules/
+**/dist/
+*.local
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+~$*

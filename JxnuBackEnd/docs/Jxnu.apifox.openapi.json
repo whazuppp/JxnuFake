@@ -1,0 +1,729 @@
+﻿{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Jxnu 前后端联调接口",
+    "version": "1.0.0",
+    "description": "根据当前 Jxnu Spring Boot 3 后端和 Vue3 前端接口封装生成。前端开发环境通过 /api 代理到 http://localhost:8082，Apifox 直接联调后端时建议使用 http://localhost:8082。"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8082",
+      "description": "后端 Spring Boot 本地服务"
+    },
+    {
+      "url": "http://localhost/api",
+      "description": "通过 Nginx 或前端代理访问时使用"
+    }
+  ],
+  "tags": [
+    {
+      "name": "登录",
+      "description": "学生登录接口"
+    },
+    {
+      "name": "学生",
+      "description": "学生信息、头像、密码接口"
+    },
+    {
+      "name": "课程",
+      "description": "课程 CRUD 接口"
+    }
+  ],
+  "paths": {
+    "/stu/login": {
+      "post": {
+        "tags": ["登录"],
+        "summary": "学生登录",
+        "description": "前端函数：loginApi(data)。登录成功后，将 data.token 作为后续接口请求头 token。",
+        "operationId": "loginApi",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              },
+              "example": {
+                "stuId": "20240001",
+                "password": "123456"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "登录成功或业务失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResult"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "登录成功",
+                    "value": {
+                      "code": 1,
+                      "msg": "success",
+                      "data": {
+                        "id": 1,
+                        "username": "zhangsan",
+                        "name": "张三",
+                        "stuId": "20240001",
+                        "token": "eyJhbGciOiJIUzI1NiJ9..."
+                      }
+                    }
+                  },
+                  "fail": {
+                    "summary": "登录失败",
+                    "value": {
+                      "code": 0,
+                      "msg": "用户名或密码错误",
+                      "data": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/student/info": {
+      "get": {
+        "tags": ["学生"],
+        "summary": "查询学生信息",
+        "description": "前端函数：getStudentInfoApi(id)。id 是学生表主键 ID，不是学号 stuId。",
+        "operationId": "getStudentInfoApi",
+        "security": [
+          {
+            "TokenAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "学生主键 ID",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StuResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "token 为空、无效或过期"
+          }
+        }
+      }
+    },
+    "/stu/uploadAvatar": {
+      "post": {
+        "tags": ["学生"],
+        "summary": "上传学生头像",
+        "description": "前端函数：uploadAvatarApi(file)。上传头像到 OSS，并更新当前登录学生 image 字段。",
+        "operationId": "uploadAvatarApi",
+        "security": [
+          {
+            "TokenAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["file"],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "头像文件，建议 JPG/PNG，前端限制小于 10MB"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "上传成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringResult"
+                },
+                "example": {
+                  "code": 1,
+                  "msg": "success",
+                  "data": "https://oss-cn-beijing.aliyuncs.com/xxx/avatar.png"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "token 为空、无效或过期"
+          }
+        }
+      }
+    },
+    "/stu/changePassword": {
+      "post": {
+        "tags": ["学生"],
+        "summary": "修改密码",
+        "description": "前端函数：changePasswordApi(data)。根据 token 中的学生 ID 修改密码，会真实更新数据库。",
+        "operationId": "changePasswordApi",
+        "security": [
+          {
+            "TokenAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              },
+              "example": {
+                "oldPassword": "123456",
+                "newPassword": "654321"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "修改成功或原密码错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringResult"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "修改成功",
+                    "value": {
+                      "code": 1,
+                      "msg": "success",
+                      "data": "修改成功"
+                    }
+                  },
+                  "wrongOldPassword": {
+                    "summary": "原密码错误",
+                    "value": {
+                      "code": 0,
+                      "msg": "原密码错误",
+                      "data": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "token 为空、无效或过期"
+          }
+        }
+      }
+    },
+    "/courses": {
+      "get": {
+        "tags": ["课程"],
+        "summary": "查询课程列表",
+        "description": "前端函数：queryAllCoursesApi()。当前已在 src/views/studenthome/courseinfo.vue 使用。",
+        "operationId": "queryAllCoursesApi",
+        "security": [
+          {
+            "TokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseListResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "token 为空、无效或过期"
+          }
+        }
+      },
+      "post": {
+        "tags": ["课程"],
+        "summary": "新增课程",
+        "description": "前端函数：addCourseApi(data)。当前后端 Mapper 未配置自增 ID 回填，因此响应 data.id 可能为空。",
+        "operationId": "addCourseApi",
+        "security": [
+          {
+            "TokenAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseCreateRequest"
+              },
+              "example": {
+                "name": "Apifox联调课程",
+                "number": 4,
+                "teacherName": "测试教师"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "新增成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "token 为空、无效或过期"
+          }
+        }
+      },
+      "put": {
+        "tags": ["课程"],
+        "summary": "修改课程",
+        "description": "前端函数：updateCourseApi(data)。当前后端 SQL 会更新 create_time，建议请求体保留 createTime。",
+        "operationId": "updateCourseApi",
+        "security": [
+          {
+            "TokenAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseUpdateRequest"
+              },
+              "example": {
+                "id": 1,
+                "name": "Apifox联调课程-已修改",
+                "number": 3,
+                "teacherName": "测试教师",
+                "createTime": "2024-09-01T10:00:00"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "修改成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "token 为空、无效或过期"
+          }
+        }
+      }
+    },
+    "/courses/{id}": {
+      "get": {
+        "tags": ["课程"],
+        "summary": "查询课程详情",
+        "description": "前端函数：queryCourseByIdApi(id)。课程不存在时 data 可能为 null。",
+        "operationId": "queryCourseByIdApi",
+        "security": [
+          {
+            "TokenAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "课程 ID",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "token 为空、无效或过期"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["课程"],
+        "summary": "删除课程",
+        "description": "前端函数：deleteCourseApi(id)。会真实删除数据库课程，请只删除测试数据。",
+        "operationId": "deleteCourseApi",
+        "security": [
+          {
+            "TokenAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "课程 ID",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "删除成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmptyResult"
+                },
+                "example": {
+                  "code": 1,
+                  "msg": "success",
+                  "data": null
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "token 为空、无效或过期"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "TokenAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "token",
+        "description": "登录接口返回的 JWT。Apifox 中可设置环境变量 token，然后在请求头中填 {{token}}。"
+      }
+    },
+    "schemas": {
+      "ResultBase": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "1 成功，0 业务失败",
+            "example": 1
+          },
+          "msg": {
+            "type": "string",
+            "example": "success"
+          },
+          "data": {
+            "nullable": true,
+            "description": "响应数据"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["stuId", "password"],
+        "properties": {
+          "stuId": {
+            "oneOf": [
+              { "type": "string" },
+              { "type": "integer" }
+            ],
+            "description": "学号"
+          },
+          "password": {
+            "type": "string",
+            "description": "密码"
+          }
+        }
+      },
+      "ChangePasswordRequest": {
+        "type": "object",
+        "required": ["oldPassword", "newPassword"],
+        "properties": {
+          "oldPassword": {
+            "type": "string",
+            "description": "原密码"
+          },
+          "newPassword": {
+            "type": "string",
+            "description": "新密码"
+          }
+        }
+      },
+      "LoginInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "username": {
+            "type": "string",
+            "example": "zhangsan"
+          },
+          "name": {
+            "type": "string",
+            "example": "张三"
+          },
+          "stuId": {
+            "type": "string",
+            "example": "20240001"
+          },
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiJ9..."
+          }
+        }
+      },
+      "Stu": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "username": {
+            "type": "string",
+            "example": "zhangsan"
+          },
+          "password": {
+            "type": "string",
+            "example": "123456",
+            "description": "当前后端会返回该字段，前端不建议展示或长期缓存"
+          },
+          "name": {
+            "type": "string",
+            "example": "张三"
+          },
+          "gender": {
+            "type": "integer",
+            "example": 1,
+            "description": "通常 1 男，2 女"
+          },
+          "image": {
+            "type": "string",
+            "example": "https://example.com/avatar.jpg"
+          },
+          "entrydate": {
+            "type": "string",
+            "format": "date",
+            "example": "2024-09-01"
+          },
+          "stuId": {
+            "type": "integer",
+            "example": 20240001
+          },
+          "createTime": {
+            "type": "string",
+            "example": "2024-09-01T10:00:00"
+          },
+          "updateTime": {
+            "type": "string",
+            "example": "2024-09-01T10:00:00"
+          }
+        }
+      },
+      "Course": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Java 程序设计"
+          },
+          "number": {
+            "type": "integer",
+            "example": 4,
+            "description": "每周课时数"
+          },
+          "teacherName": {
+            "type": "string",
+            "example": "李老师"
+          },
+          "createTime": {
+            "type": "string",
+            "example": "2024-09-01T10:00:00"
+          },
+          "updateTime": {
+            "type": "string",
+            "example": "2024-09-01T10:00:00"
+          }
+        }
+      },
+      "CourseCreateRequest": {
+        "type": "object",
+        "required": ["name", "number", "teacherName"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Java 程序设计"
+          },
+          "number": {
+            "type": "integer",
+            "example": 4
+          },
+          "teacherName": {
+            "type": "string",
+            "example": "李老师"
+          }
+        }
+      },
+      "CourseUpdateRequest": {
+        "type": "object",
+        "required": ["id", "name", "number", "teacherName"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Web 前端开发"
+          },
+          "number": {
+            "type": "integer",
+            "example": 3
+          },
+          "teacherName": {
+            "type": "string",
+            "example": "王老师"
+          },
+          "createTime": {
+            "type": "string",
+            "example": "2024-09-01T10:00:00",
+            "description": "建议保留，当前后端更新 SQL 会更新 create_time"
+          }
+        }
+      },
+      "LoginResult": {
+        "allOf": [
+          { "$ref": "#/components/schemas/ResultBase" },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/LoginInfo"
+              }
+            }
+          }
+        ]
+      },
+      "StuResult": {
+        "allOf": [
+          { "$ref": "#/components/schemas/ResultBase" },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Stu"
+              }
+            }
+          }
+        ]
+      },
+      "CourseResult": {
+        "allOf": [
+          { "$ref": "#/components/schemas/ResultBase" },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Course"
+              }
+            }
+          }
+        ]
+      },
+      "CourseListResult": {
+        "allOf": [
+          { "$ref": "#/components/schemas/ResultBase" },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Course"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "StringResult": {
+        "allOf": [
+          { "$ref": "#/components/schemas/ResultBase" },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "EmptyResult": {
+        "allOf": [
+          { "$ref": "#/components/schemas/ResultBase" },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "nullable": true
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
