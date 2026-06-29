@@ -45,7 +45,6 @@ import ChangePasswordView from '@/views/studenthome/changepassword.vue';
 import AcademicRecordView from '@/views/studenthome/academicrecord.vue';
 import NewTeacherView from '@/views/studenthome/newteacher.vue';
 import CourseFeedbackView from '@/views/studenthome/coursefeedback.vue';
-import ParentInfoView from '@/views/studenthome/parentinfo.vue';
 import DualDegreeView from '@/views/studenthome/dualdegree.vue';
 import RelatedApplyView from '@/views/studenthome/relatedapply.vue';
 import LearningExpView from '@/views/studenthome/learningexp.vue';
@@ -89,7 +88,6 @@ const router = createRouter({
             { path: 'academicrecord', component: AcademicRecordView },
             { path: 'newteacher', component: NewTeacherView },
             { path: 'coursefeedback', component: CourseFeedbackView },
-            { path: 'parentinfo', component: ParentInfoView },
             { path: 'dualdegree', component: DualDegreeView },
             { path: 'relatedapply', component: RelatedApplyView },
             { path: 'learningexp', component: LearningExpView },

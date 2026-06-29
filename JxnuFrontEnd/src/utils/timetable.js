@@ -22,3 +22,13 @@ export function buildTimetableGrid(offerings = []) {
   }
   return grid
 }
+
+export function normalizeCourseRows(offerings = []) {
+  const unique = new Map()
+  offerings.forEach(offering => {
+    if (offering?.id != null && !unique.has(offering.id)) unique.set(offering.id, offering)
+  })
+  return [...unique.values()].sort((left, right) =>
+    String(left.courseCode || '').localeCompare(String(right.courseCode || ''))
+  )
+}

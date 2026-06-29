@@ -9,4 +9,5 @@ public class StudentSummaryVO {
     private String name;
     private Short gender;
     private String className;
+    private String image;
 }

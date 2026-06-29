@@ -13,6 +13,7 @@ import com.mygroup5people.jxnufake.mapper.OfferingMapper;
 import com.mygroup5people.jxnufake.mapper.ReferenceMapper;
 import com.mygroup5people.jxnufake.mapper.TeacherMapper;
 import com.mygroup5people.jxnufake.vo.OfferingVO;
+import com.mygroup5people.jxnufake.vo.StudentSummaryVO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,23 +53,23 @@ class OfferingServiceImplTest {
         Course course = new Course();
         course.setId(8);
         course.setWeeklyPeriods(2);
-        when(courseMapper.selectById(8)).thenReturn(course);
+        lenient().when(courseMapper.selectById(8)).thenReturn(course);
 
         Teacher teacher = new Teacher();
         teacher.setId(3);
-        when(teacherMapper.selectById(3)).thenReturn(teacher);
+        lenient().when(teacherMapper.selectById(3)).thenReturn(teacher);
 
         AdministrativeClass administrativeClass = new AdministrativeClass();
         administrativeClass.setId(2);
-        when(referenceMapper.selectClassById(2)).thenReturn(administrativeClass);
+        lenient().when(referenceMapper.selectClassById(2)).thenReturn(administrativeClass);
 
         Semester semester = new Semester();
         semester.setId(1);
-        when(referenceMapper.selectSemesterById(1)).thenReturn(semester);
+        lenient().when(referenceMapper.selectSemesterById(1)).thenReturn(semester);
 
         Classroom classroom = new Classroom();
         classroom.setId(5);
-        when(referenceMapper.selectClassroomById(5)).thenReturn(classroom);
+        lenient().when(referenceMapper.selectClassroomById(5)).thenReturn(classroom);
 
         lenient().doAnswer(invocation -> {
             invocation.<com.mygroup5people.jxnufake.entity.CourseOffering>getArgument(0).setId(12);
@@ -171,6 +172,21 @@ class OfferingServiceImplTest {
         verify(offeringMapper).countClassroomConflicts(1, 2, 3, 4, 5, null);
         verify(offeringMapper).countTeacherConflicts(1, 2, 3, 4, 3, null);
         verify(offeringMapper).countClassConflicts(1, 2, 3, 4, 2, null);
+    }
+
+    @Test
+    void returnsStudentAvatarInCourseRoster() {
+        OfferingVO offering = new OfferingVO();
+        offering.setId(10);
+        StudentSummaryVO student = new StudentSummaryVO();
+        student.setImage("https://example.com/avatar.jpg");
+        when(offeringMapper.selectById(10)).thenReturn(offering);
+        when(offeringMapper.countStudentEnrollment(1, 10)).thenReturn(1);
+        when(offeringMapper.listStudents(10)).thenReturn(List.of(student));
+
+        List<StudentSummaryVO> students = offeringService.listStudents(10, 1);
+
+        assertEquals("https://example.com/avatar.jpg", students.get(0).getImage());
     }
 
     private OfferingRequest request(ScheduleRequest... schedules) {

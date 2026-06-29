@@ -45,6 +45,8 @@
 | DELETE | `/offerings/{id}` | 删除没有选课记录的开课班 |
 | GET | `/offerings/{id}/students` | 当前学生查看本人已选开课班的名单 |
 
+名单项返回 `studentNo`、`name`、`className` 和 `image`，其中 `image` 为学生头像地址。
+
 请求示例：
 
 ```json
