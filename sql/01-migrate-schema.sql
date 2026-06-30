@@ -178,8 +178,9 @@ BEGIN
         JOIN course_offering new_offering ON new_offering.id = NEW.offering_id
         WHERE sc.student_id = NEW.student_id
           AND selected_offering.course_id = new_offering.course_id
+          AND selected_offering.semester_id = new_offering.semester_id
     ) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '同一学生不能重复选择同一课程';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '同一学生不能重复选择同一学期内的同一课程';
     END IF;
 END$$
 
@@ -195,8 +196,9 @@ BEGIN
         WHERE sc.student_id = NEW.student_id
           AND sc.id <> OLD.id
           AND selected_offering.course_id = new_offering.course_id
+          AND selected_offering.semester_id = new_offering.semester_id
     ) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '同一学生不能重复选择同一课程';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '同一学生不能重复选择同一学期内的同一课程';
     END IF;
 END$$
 

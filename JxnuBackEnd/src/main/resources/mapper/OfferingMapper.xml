@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sf110.jxnufake.mapper.OfferingMapper">
+
+    <sql id="columns">
+        o.id,
+        o.course_id courseId,
+        c.course_code courseCode,
+        c.name courseName,
+        c.course_type courseType,
+        c.credit,
+        c.weekly_periods weeklyPeriods,
+        o.teacher_id teacherId,
+        t.teacher_no teacherNo,
+        t.name teacherName,
+        o.class_id classId,
+        ac.class_name className,
+        o.semester_id semesterId,
+        sem.name semesterName,
+        o.capacity,
+        (select count(*) from student_course sc where sc.offering_id = o.id) studentCount
+    </sql>
+
+    <sql id="joins">
+        from course_offering o
+        join course c on c.id = o.course_id
+        join teacher t on t.id = o.teacher_id
+        join administrative_class ac on ac.id = o.class_id
+        join semester sem on sem.id = o.semester_id
+    </sql>
+
+    <select id="list" resultType="com.sf110.jxnufake.vo.OfferingVO">
+        select
+        <include refid="columns"/>
+        <include refid="joins"/>
+        <where>
+            <if test="semesterId != null">and o.semester_id = #{semesterId}</if>
+            <if test="courseName != null and courseName != ''">and c.name like concat('%', #{courseName}, '%')</if>
+            <if test="teacherName != null and teacherName != ''">and t.name like concat('%', #{teacherName}, '%')</if>
+            <if test="classId != null">and o.class_id = #{classId}</if>
+        </where>
+        order by sem.start_date desc, c.course_code, ac.class_code
+    </select>
+
+    <select id="selectById" resultType="com.sf110.jxnufake.vo.OfferingVO">
+        select
+        <include refid="columns"/>
+        <include refid="joins"/>
+        where o.id = #{id}
+    </select>
+
+    <select id="listSchedules" resultType="com.sf110.jxnufake.vo.ScheduleVO">
+        select
+        cs.id,
+        cs.weekday,
+        cs.start_period startPeriod,
+        cs.end_period endPeriod,
+        cs.classroom_id classroomId,
+        cr.building,
+        cr.room_no roomNo,
+        sp.start_time startTime,
+        ep.end_time endTime
+        from course_schedule cs
+        join classroom cr on cr.id = cs.classroom_id
+        join class_period sp on sp.period_no = cs.start_period
+        join class_period ep on ep.period_no = cs.end_period
+        where cs.offering_id = #{offeringId}
+        order by cs.weekday, cs.start_period
+    </select>
+
+    <insert id="insertOffering" useGeneratedKeys="true" keyProperty="id">
+        insert into course_offering(course_id, teacher_id, class_id, semester_id, capacity, create_time, update_time)
+        values(#{courseId}, #{teacherId}, #{classId}, #{semesterId}, #{capacity}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="updateOffering">
+        update course_offering
+        set course_id = #{courseId},
+        teacher_id = #{teacherId},
+        class_id = #{classId},
+        semester_id = #{semesterId},
+        capacity = #{capacity},
+        update_time = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteOffering">
+        delete from course_offering where id = #{id}
+    </delete>
+
+    <delete id="deleteSchedules">
+        delete from course_schedule where offering_id = #{offeringId}
+    </delete>
+
+    <insert id="insertSchedule" useGeneratedKeys="true" keyProperty="id">
+        insert into course_schedule(offering_id, weekday, start_period, end_period, classroom_id)
+        values(#{offeringId}, #{weekday}, #{startPeriod}, #{endPeriod}, #{classroomId})
+    </insert>
+
+    <sql id="overlap">
+        cs.weekday = #{weekday}
+        and cs.start_period &lt;= #{endPeriod}
+        and cs.end_period &gt;= #{startPeriod}
+        and o.semester_id = #{semesterId}
+        <if test="excludeOfferingId != null">and o.id != #{excludeOfferingId}</if>
+    </sql>
+
+    <select id="countClassroomConflicts" resultType="java.lang.Integer">
+        select count(*)
+        from course_schedule cs
+        join course_offering o on o.id = cs.offering_id
+        where <include refid="overlap"/>
+        and cs.classroom_id = #{classroomId}
+    </select>
+
+    <select id="countTeacherConflicts" resultType="java.lang.Integer">
+        select count(*)
+        from course_schedule cs
+        join course_offering o on o.id = cs.offering_id
+        where <include refid="overlap"/>
+        and o.teacher_id = #{teacherId}
+    </select>
+
+    <select id="countClassConflicts" resultType="java.lang.Integer">
+        select count(*)
+        from course_schedule cs
+        join course_offering o on o.id = cs.offering_id
+        where <include refid="overlap"/>
+        and o.class_id = #{classId}
+    </select>
+
+    <select id="countEnrollments" resultType="java.lang.Integer">
+        select count(*)
+        from student_course
+        where offering_id = #{offeringId}
+    </select>
+
+    <select id="countStudentEnrollment" resultType="java.lang.Integer">
+        select count(*)
+        from student_course
+        where student_id = #{studentId}
+        and offering_id = #{offeringId}
+    </select>
+
+    <select id="listStudents" resultType="com.sf110.jxnufake.vo.StudentSummaryVO">
+        select
+        s.id,
+        s.stu_id studentNo,
+        s.name,
+        s.gender,
+        ac.class_name className,
+        s.image image
+        from student_course sc
+        join student s on s.id = sc.student_id
+        join administrative_class ac on ac.id = s.class_id
+        where sc.offering_id = #{offeringId}
+        order by s.stu_id
+    </select>
+
+</mapper>

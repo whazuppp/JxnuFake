@@ -26,6 +26,14 @@ const logout = () => {
     router.push("/login");
   });
 };
+
+const openAudit = () => {
+  window.open('https://jxpj.jxnu.edu.cn/', '_blank');
+};
+
+const openCourseDiscussion = () => {
+  window.open('https://jwc.jxnu.edu.cn/WsktNew/index.aspx', '_blank');
+};
 </script>
 
 <template>
@@ -55,14 +63,14 @@ const logout = () => {
         <el-sub-menu index="/teaching-org">
           <template #title>教学组织</template>
           <el-menu-item index="/teaching-org/org-functions">机构职能</el-menu-item>
-          <el-menu-item index="/teaching-org/monitoring">常态监控</el-menu-item>
-          <el-menu-item index="/teaching-org/major-assess">专业评估</el-menu-item>
-          <el-menu-item index="/teaching-org/project-review">项目评审</el-menu-item>
-          <el-menu-item index="/teaching-org/audit">审核评估</el-menu-item>
-          <el-menu-item index="/teaching-org/data-collect">状态数据采集v3.0</el-menu-item>
+          <el-menu-item
+            index="audit-external"
+            :route="$route.fullPath"
+            @click="openAudit"
+          >
+            审核评估
+          </el-menu-item>
         </el-sub-menu>
-
-        <el-menu-item index="/teaching-rules">教学制度</el-menu-item>
 
         <el-sub-menu index="/teaching-resource">
           <template #title>教学资源</template>
@@ -72,15 +80,20 @@ const logout = () => {
 
         <el-sub-menu index="/interaction">
           <template #title>教学互动</template>
-          <el-menu-item index="/interaction/course-discussion">课程讨论</el-menu-item>
+          <el-menu-item
+            index="course-discussion-external"
+            :route="$route.fullPath"
+            @click="openCourseDiscussion"
+          >
+            课程讨论
+          </el-menu-item>
           <el-menu-item index="/interaction/stuopinion">建议意见</el-menu-item>
         </el-sub-menu>
 
         <el-sub-menu index="/studycenter">
           <template #title>学习中心</template>
           <el-menu-item index="/studycenter/course-select">选课</el-menu-item>
-          <el-menu-item index="/studycenter/evaluation">评教</el-menu-item>
-          <el-menu-item index="/studycenter/nav">入学导航</el-menu-item>
+          <el-menu-item index="/studenthome/judge">评教</el-menu-item>
           <el-menu-item index="/studycenter/tutoring">辅导</el-menu-item>
         </el-sub-menu>
       </el-menu>

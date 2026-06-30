@@ -1,64 +1,52 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.mygroup5people.jxnufake.mapper.CourseMapper">
-
-    <sql id="courseColumns">
-        id, name, number, teacher_name, create_time, update_time
+<mapper namespace="com.sf110.jxnufake.mapper.CourseMapper">
+    <sql id="columns">
+        id, course_code, name, course_type, credit, weekly_periods, create_time, update_time
     </sql>
 
-    <select id="list" resultType="com.mygroup5people.jxnufake.pojo.Course">
-        select
-        <include refid="courseColumns"/>
-        from jxnu.course
+    <select id="list" resultType="com.sf110.jxnufake.entity.Course">
+        select <include refid="columns"/> from course
         <where>
+            <if test="courseCode != null and courseCode != ''">
+                and course_code like concat('%', #{courseCode}, '%')
+            </if>
             <if test="name != null and name != ''">
                 and name like concat('%', #{name}, '%')
             </if>
-            <if test="teacherName != null and teacherName != ''">
-                and teacher_name like concat('%', #{teacherName}, '%')
-            </if>
-            <if test="number != null">
-                and number = #{number}
+            <if test="courseType != null and courseType != ''">
+                and course_type = #{courseType}
             </if>
         </where>
-        order by id
+        order by course_code
     </select>
 
-    <select id="selectById" resultType="com.mygroup5people.jxnufake.pojo.Course">
-        select
-        <include refid="courseColumns"/>
-        from jxnu.course
-        where id = #{id}
+    <select id="selectById" resultType="com.sf110.jxnufake.entity.Course">
+        select <include refid="columns"/> from course where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="com.mygroup5people.jxnufake.pojo.Course"
-            useGeneratedKeys="true" keyProperty="id">
-        insert into jxnu.course (name, number, teacher_name, create_time, update_time)
-        values (#{name}, #{number}, #{teacherName}, #{createTime}, #{updateTime})
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into course
+        (course_code, name, course_type, credit, weekly_periods, create_time, update_time)
+        values
+        (#{courseCode}, #{name}, #{courseType}, #{credit}, #{weeklyPeriods}, #{createTime}, #{updateTime})
     </insert>
 
-    <update id="update" parameterType="com.mygroup5people.jxnufake.pojo.Course">
-        update jxnu.course
-        <set>
-            <if test="name != null and name != ''">
-                name = #{name},
-            </if>
-            <if test="number != null">
-                number = #{number},
-            </if>
-            <if test="teacherName != null and teacherName != ''">
-                teacher_name = #{teacherName},
-            </if>
+    <update id="update">
+        update course
+        set course_code = #{courseCode},
+            name = #{name},
+            course_type = #{courseType},
+            credit = #{credit},
+            weekly_periods = #{weeklyPeriods},
             update_time = #{updateTime}
-        </set>
         where id = #{id}
     </update>
 
-    <delete id="delete">
-        delete from jxnu.course
-        where id = #{id}
-    </delete>
+    <delete id="delete">delete from course where id = #{id}</delete>
 
+    <select id="countOfferings" resultType="java.lang.Integer">
+        select count(*) from course_offering where course_id = #{id}
+    </select>
 </mapper>

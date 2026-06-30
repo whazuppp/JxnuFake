@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sf110.jxnufake.mapper.TeacherMapper">
+    <sql id="columns">id, teacher_no, name, gender, title, create_time, update_time</sql>
+    <select id="list" resultType="com.sf110.jxnufake.entity.Teacher">
+        select <include refid="columns"/> from teacher
+        <where>
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="field == 'teacherNo'">
+                        and teacher_no
+                        <choose>
+                            <when test="exact">= #{keyword}</when>
+                            <otherwise>like concat('%', #{keyword}, '%')</otherwise>
+                        </choose>
+                    </when>
+                    <otherwise>
+                        and name
+                        <choose>
+                            <when test="exact">= #{keyword}</when>
+                            <otherwise>like concat('%', #{keyword}, '%')</otherwise>
+                        </choose>
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+        order by teacher_no
+    </select>
+    <select id="selectById" resultType="com.sf110.jxnufake.entity.Teacher">
+        select <include refid="columns"/> from teacher where id = #{id}
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into teacher (teacher_no, name, gender, title, create_time, update_time)
+        values (#{teacherNo}, #{name}, #{gender}, #{title}, #{createTime}, #{updateTime})
+    </insert>
+    <update id="update">
+        update teacher set teacher_no=#{teacherNo}, name=#{name}, gender=#{gender},
+        title=#{title}, update_time=#{updateTime} where id=#{id}
+    </update>
+    <delete id="delete">delete from teacher where id=#{id}</delete>
+    <select id="countOfferings" resultType="java.lang.Integer">
+        select count(*) from course_offering where teacher_id=#{id}
+    </select>
+</mapper>
