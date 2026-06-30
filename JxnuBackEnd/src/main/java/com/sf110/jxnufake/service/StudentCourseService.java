@@ -1,7 +1,7 @@
-package com.mygroup5people.jxnufake.service;
+package com.sf110.jxnufake.service;
 
-import com.mygroup5people.jxnufake.vo.OfferingVO;
-import com.mygroup5people.jxnufake.vo.TimetableVO;
+import com.sf110.jxnufake.vo.OfferingVO;
+import com.sf110.jxnufake.vo.TimetableVO;
 import java.util.List;
 
 public interface StudentCourseService {

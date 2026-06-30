@@ -1,10 +1,10 @@
-package com.mygroup5people.jxnufake.service.impl;
+package com.sf110.jxnufake.service.impl;
 
-import com.mygroup5people.jxnufake.mapper.CourseMapper;
-import com.mygroup5people.jxnufake.dto.CourseRequest;
-import com.mygroup5people.jxnufake.entity.Course;
-import com.mygroup5people.jxnufake.exception.BusinessException;
-import com.mygroup5people.jxnufake.service.CourseService;
+import com.sf110.jxnufake.mapper.CourseMapper;
+import com.sf110.jxnufake.dto.CourseRequest;
+import com.sf110.jxnufake.entity.Course;
+import com.sf110.jxnufake.exception.BusinessException;
+import com.sf110.jxnufake.service.CourseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

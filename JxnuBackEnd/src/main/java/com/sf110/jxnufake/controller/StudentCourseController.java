@@ -1,8 +1,8 @@
-package com.mygroup5people.jxnufake.controller;
+package com.sf110.jxnufake.controller;
 
-import com.mygroup5people.jxnufake.pojo.Result;
-import com.mygroup5people.jxnufake.service.StudentCourseService;
-import com.mygroup5people.jxnufake.utils.CurrentStudent;
+import com.sf110.jxnufake.pojo.Result;
+import com.sf110.jxnufake.service.StudentCourseService;
+import com.sf110.jxnufake.utils.CurrentStudent;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package com.mygroup5people.jxnufake.utils;
+package com.sf110.jxnufake.utils;
 
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;

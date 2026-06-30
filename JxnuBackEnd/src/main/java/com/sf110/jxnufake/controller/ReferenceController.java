@@ -1,7 +1,7 @@
-package com.mygroup5people.jxnufake.controller;
+package com.sf110.jxnufake.controller;
 
-import com.mygroup5people.jxnufake.pojo.Result;
-import com.mygroup5people.jxnufake.service.ReferenceService;
+import com.sf110.jxnufake.pojo.Result;
+import com.sf110.jxnufake.service.ReferenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

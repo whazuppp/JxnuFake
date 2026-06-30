@@ -1,6 +1,6 @@
-package com.mygroup5people.jxnufake.exception;
+package com.sf110.jxnufake.exception;
 
-import com.mygroup5people.jxnufake.pojo.Result;
+import com.sf110.jxnufake.pojo.Result;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -1,6 +1,6 @@
-package com.mygroup5people.jxnufake.mapper;
+package com.sf110.jxnufake.mapper;
 
-import com.mygroup5people.jxnufake.entity.Course;
+import com.sf110.jxnufake.entity.Course;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

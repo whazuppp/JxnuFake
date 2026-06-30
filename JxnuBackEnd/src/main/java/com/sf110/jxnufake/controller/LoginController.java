@@ -1,9 +1,9 @@
-package com.mygroup5people.jxnufake.controller;
+package com.sf110.jxnufake.controller;
 
-import com.mygroup5people.jxnufake.pojo.LoginInfo;
-import com.mygroup5people.jxnufake.pojo.Result;
-import com.mygroup5people.jxnufake.pojo.Stu;
-import com.mygroup5people.jxnufake.service.StuService;
+import com.sf110.jxnufake.pojo.LoginInfo;
+import com.sf110.jxnufake.pojo.Result;
+import com.sf110.jxnufake.pojo.Stu;
+import com.sf110.jxnufake.service.StuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

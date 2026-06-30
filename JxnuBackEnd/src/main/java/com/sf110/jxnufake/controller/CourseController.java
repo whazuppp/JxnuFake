@@ -1,9 +1,9 @@
-package com.mygroup5people.jxnufake.controller;
+package com.sf110.jxnufake.controller;
 
-import com.mygroup5people.jxnufake.dto.CourseRequest;
-import com.mygroup5people.jxnufake.entity.Course;
-import com.mygroup5people.jxnufake.pojo.Result;
-import com.mygroup5people.jxnufake.service.CourseService;
+import com.sf110.jxnufake.dto.CourseRequest;
+import com.sf110.jxnufake.entity.Course;
+import com.sf110.jxnufake.pojo.Result;
+import com.sf110.jxnufake.service.CourseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

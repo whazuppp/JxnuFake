@@ -1,16 +1,11 @@
 <template>
   <div class="student-home-layout">
     <el-aside class="sidebar" width="200px">
-      <div class="avatar-container">
-        <el-upload
-          class="avatar-uploader"
-          :show-file-list="false"
-          :http-request="uploadAvatar"
-          :before-upload="beforeUpload"
-        >
+      <div class="avatar-container" @click="goToRelatedApply">
+        <div class="avatar-uploader">
           <img v-if="avatarUrl" :src="avatarUrl" class="avatar" />
           <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-        </el-upload>
+        </div>
       </div>
 
       <el-menu
@@ -26,36 +21,23 @@
           <el-menu-item index="/studenthome/schedule">课程表</el-menu-item>
           <el-menu-item index="/studenthome/baseinfo">基本信息</el-menu-item>
           <el-menu-item index="/studenthome/changepassword">修改密码</el-menu-item>
-          <el-menu-item index="/studenthome/academicrecord">学籍档案</el-menu-item>
           <el-menu-item index="/studenthome/newteacher">新生导师</el-menu-item>
-          <el-menu-item index="/studenthome/coursefeedback">课程反馈</el-menu-item>
           <el-menu-item index="/studenthome/dualdegree">双专业双学位课程</el-menu-item>
           <el-menu-item index="/studenthome/relatedapply">相片更换申请</el-menu-item>
-          <el-menu-item index="/studenthome/learningexp">学习体验</el-menu-item>
         </el-sub-menu>
 
         <el-sub-menu index="service">
           <template #title>公共服务</template>
           <el-menu-item index="/studenthome/program">培养方案</el-menu-item>
-          <el-menu-item index="/studenthome/courseinfo">课程信息</el-menu-item>
-          <el-menu-item index="/studenthome/timetable">开课安排</el-menu-item>
           <el-menu-item index="/studenthome/studentinfo">学生信息</el-menu-item>
-          <el-menu-item index="/studenthome/exam">考试信息</el-menu-item>
-          <el-menu-item index="/studenthome/shortmsg">短信平台</el-menu-item>
-          <el-menu-item index="/studenthome/classroom">教室资源安排</el-menu-item>
-          <el-menu-item index="/studenthome/degreeaudit">双学位课程安排</el-menu-item>
+          <el-menu-item index="/studenthome/teacherinfo">教工信息</el-menu-item>
           <el-menu-item index="/studenthome/graduation">毕业生图像采集</el-menu-item>
-          <el-menu-item index="/studenthome/makeup">补缓考安排</el-menu-item>
-          <el-menu-item index="/studenthome/scorequery">教学查询</el-menu-item>
         </el-sub-menu>
 
         <el-sub-menu index="teaching">
           <template #title>教学信息</template>
           <el-menu-item index="/studenthome/judge">网上评教</el-menu-item>
-          <el-menu-item index="/studenthome/questionbox">教务意见箱</el-menu-item>
           <el-menu-item index="/studenthome/examarrange">期末考试安排</el-menu-item>
-          <el-menu-item index="/studenthome/doublemajor">辅修双专业双学位报名</el-menu-item>
-          <el-menu-item index="/studenthome/outschool">毕业生毕业学位申请</el-menu-item>
         </el-sub-menu>
       </el-menu>
     </el-aside>
@@ -78,15 +60,23 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
-import { getStudentInfoApi, uploadAvatarApi } from '@/api/stu'
+import { useRouter } from 'vue-router'
+import { getStudentInfoApi } from '@/api/stu'
 import { readLoginUser } from '@/utils/auth'
+import { STUDENT_AVATAR_UPDATED_EVENT } from '@/utils/avatarApply'
 
 const avatarUrl = ref('')
+const router = useRouter()
+
+const syncAvatarFromLocal = () => {
+  avatarUrl.value = readLoginUser()?.image || ''
+}
 
 onMounted(async () => {
+  window.addEventListener(STUDENT_AVATAR_UPDATED_EVENT, syncAvatarFromLocal)
   const user = readLoginUser()
   if (!user) return
 
@@ -106,39 +96,12 @@ onMounted(async () => {
   }
 })
 
-const uploadAvatar = async ({ file }) => {
-  try {
-    const result = await uploadAvatarApi(file)
-    handleUploadSuccess(result)
-  } catch (err) {
-    ElMessage.error('上传头像失败')
-  }
-}
+onBeforeUnmount(() => {
+  window.removeEventListener(STUDENT_AVATAR_UPDATED_EVENT, syncAvatarFromLocal)
+})
 
-const handleUploadSuccess = (response) => {
-  if (response && response.code === 1) {
-    avatarUrl.value = response.data
-    const user = readLoginUser() || {}
-    localStorage.setItem('loginUser', JSON.stringify({ ...user, image: response.data }))
-    ElMessage.success('头像上传成功')
-  } else {
-    ElMessage.error(response?.msg || '上传头像失败')
-  }
-}
-
-const beforeUpload = (file) => {
-  const isImage = file.type === 'image/jpeg' || file.type === 'image/png'
-  const isLt10M = file.size / 1024 / 1024 < 10
-
-  if (!isImage) {
-    ElMessage.error('只能上传 JPG/PNG 格式的图片')
-    return false
-  }
-  if (!isLt10M) {
-    ElMessage.error('上传图片大小不能超过 10MB')
-    return false
-  }
-  return true
+const goToRelatedApply = () => {
+  router.push('/studenthome/relatedapply')
 }
 </script>
 
@@ -162,6 +125,7 @@ const beforeUpload = (file) => {
 .avatar-container {
   margin-bottom: 15px;
   text-align: center;
+  cursor: pointer;
 }
 
 .avatar-uploader .avatar {
@@ -169,6 +133,8 @@ const beforeUpload = (file) => {
   height: 100px;
   border-radius: 50%;
   display: block;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
 }
 
 .avatar-uploader-icon {

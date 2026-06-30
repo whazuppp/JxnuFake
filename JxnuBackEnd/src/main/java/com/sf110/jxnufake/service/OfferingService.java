@@ -1,8 +1,8 @@
-package com.mygroup5people.jxnufake.service;
+package com.sf110.jxnufake.service;
 
-import com.mygroup5people.jxnufake.dto.OfferingRequest;
-import com.mygroup5people.jxnufake.vo.OfferingVO;
-import com.mygroup5people.jxnufake.vo.StudentSummaryVO;
+import com.sf110.jxnufake.dto.OfferingRequest;
+import com.sf110.jxnufake.vo.OfferingVO;
+import com.sf110.jxnufake.vo.StudentSummaryVO;
 import java.util.List;
 
 public interface OfferingService {

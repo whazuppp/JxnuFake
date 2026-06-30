@@ -1,4 +1,4 @@
-package com.mygroup5people.jxnufake.utils;
+package com.sf110.jxnufake.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

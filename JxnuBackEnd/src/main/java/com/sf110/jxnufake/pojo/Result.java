@@ -1,4 +1,4 @@
-package com.mygroup5people.jxnufake.pojo;
+package com.sf110.jxnufake.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

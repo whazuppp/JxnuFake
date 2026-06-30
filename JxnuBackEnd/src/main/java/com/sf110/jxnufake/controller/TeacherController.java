@@ -1,9 +1,9 @@
-package com.mygroup5people.jxnufake.controller;
+package com.sf110.jxnufake.controller;
 
-import com.mygroup5people.jxnufake.dto.TeacherRequest;
-import com.mygroup5people.jxnufake.entity.Teacher;
-import com.mygroup5people.jxnufake.pojo.Result;
-import com.mygroup5people.jxnufake.service.TeacherService;
+import com.sf110.jxnufake.dto.TeacherRequest;
+import com.sf110.jxnufake.entity.Teacher;
+import com.sf110.jxnufake.pojo.Result;
+import com.sf110.jxnufake.service.TeacherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +17,10 @@ public class TeacherController {
     private final TeacherService teacherService;
 
     @GetMapping
-    public Result list(@RequestParam(required = false) String teacherNo,
-                       @RequestParam(required = false) String name) {
-        Teacher filter = new Teacher();
-        filter.setTeacherNo(teacherNo);
-        filter.setName(name);
-        return Result.success(teacherService.list(filter));
+    public Result list(@RequestParam(required = false) String field,
+                       @RequestParam(required = false) String keyword,
+                       @RequestParam(defaultValue = "true") boolean exact) {
+        return Result.success(teacherService.list(field, keyword, exact));
     }
 
     @GetMapping("/{id}")

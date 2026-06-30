@@ -1,6 +1,6 @@
-package com.mygroup5people.jxnufake.mapper;
+package com.sf110.jxnufake.mapper;
 
-import com.mygroup5people.jxnufake.vo.OfferingVO;
+import com.sf110.jxnufake.vo.OfferingVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;

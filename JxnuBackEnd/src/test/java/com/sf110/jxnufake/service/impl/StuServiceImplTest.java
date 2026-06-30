@@ -1,7 +1,8 @@
-package com.mygroup5people.jxnufake.service.impl;
+package com.sf110.jxnufake.service.impl;
 
-import com.mygroup5people.jxnufake.mapper.StuMapper;
-import com.mygroup5people.jxnufake.vo.StudentInfoVO;
+import com.sf110.jxnufake.mapper.StuMapper;
+import com.sf110.jxnufake.vo.StudentInfoVO;
+import com.sf110.jxnufake.vo.StudentSummaryVO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,5 +36,18 @@ class StuServiceImplTest {
         StudentInfoVO actual = stuService.getInfo(7);
 
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void studentListPassesFilterAndExactModeToMapper() {
+        StudentSummaryVO expectedStudent = new StudentSummaryVO();
+        expectedStudent.setName("林凯");
+        var expected = java.util.List.of(expectedStudent);
+        when(stuMapper.list("name", "林凯", true)).thenReturn(expected);
+
+        var actual = stuService.list("name", "林凯", true);
+
+        assertEquals(expected, actual);
+        verify(stuMapper).list("name", "林凯", true);
     }
 }

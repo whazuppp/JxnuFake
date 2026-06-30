@@ -1,6 +1,6 @@
-package com.mygroup5people.jxnufake.Interceptor;
+package com.sf110.jxnufake.Interceptor;
 
-import com.mygroup5people.jxnufake.utils.JwtUtils;
+import com.sf110.jxnufake.utils.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;

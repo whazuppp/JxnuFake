@@ -1,12 +1,12 @@
-package com.mygroup5people.jxnufake.service;
+package com.sf110.jxnufake.service;
 
-import com.mygroup5people.jxnufake.dto.TeacherRequest;
-import com.mygroup5people.jxnufake.entity.Teacher;
+import com.sf110.jxnufake.dto.TeacherRequest;
+import com.sf110.jxnufake.entity.Teacher;
 
 import java.util.List;
 
 public interface TeacherService {
-    List<Teacher> list(Teacher filter);
+    List<Teacher> list(String field, String keyword, boolean exact);
     Teacher get(Integer id);
     Teacher create(TeacherRequest request);
     Teacher update(Integer id, TeacherRequest request);

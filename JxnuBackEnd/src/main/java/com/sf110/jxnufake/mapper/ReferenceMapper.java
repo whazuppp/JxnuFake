@@ -1,9 +1,9 @@
-package com.mygroup5people.jxnufake.mapper;
+package com.sf110.jxnufake.mapper;
 
-import com.mygroup5people.jxnufake.entity.AdministrativeClass;
-import com.mygroup5people.jxnufake.entity.ClassPeriod;
-import com.mygroup5people.jxnufake.entity.Classroom;
-import com.mygroup5people.jxnufake.entity.Semester;
+import com.sf110.jxnufake.entity.AdministrativeClass;
+import com.sf110.jxnufake.entity.ClassPeriod;
+import com.sf110.jxnufake.entity.Classroom;
+import com.sf110.jxnufake.entity.Semester;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

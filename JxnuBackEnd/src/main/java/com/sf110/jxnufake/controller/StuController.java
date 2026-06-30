@@ -1,9 +1,9 @@
-package com.mygroup5people.jxnufake.controller;
+package com.sf110.jxnufake.controller;
 
-import com.mygroup5people.jxnufake.pojo.Result;
-import com.mygroup5people.jxnufake.service.StuService;
-import com.mygroup5people.jxnufake.utils.AliOSSUtils;
-import com.mygroup5people.jxnufake.utils.CurrentStudent;
+import com.sf110.jxnufake.pojo.Result;
+import com.sf110.jxnufake.service.StuService;
+import com.sf110.jxnufake.utils.AliOSSUtils;
+import com.sf110.jxnufake.utils.CurrentStudent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -54,6 +54,13 @@ public class StuController {
     @GetMapping("/student/info")
     public Result getStudentInfo(HttpServletRequest request) {
         return Result.success(stuService.getInfo(CurrentStudent.id(request)));
+    }
+
+    @GetMapping("/students")
+    public Result listStudents(@RequestParam(required = false) String field,
+                               @RequestParam(required = false) String keyword,
+                               @RequestParam(defaultValue = "true") boolean exact) {
+        return Result.success(stuService.list(field, keyword, exact));
     }
 
 

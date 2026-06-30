@@ -1,19 +1,15 @@
-package com.mygroup5people.jxnufake.service.impl;
+package com.sf110.jxnufake.service.impl;
 
-import com.mygroup5people.jxnufake.dto.OfferingRequest;
-import com.mygroup5people.jxnufake.dto.ScheduleRequest;
-import com.mygroup5people.jxnufake.entity.AdministrativeClass;
-import com.mygroup5people.jxnufake.entity.Classroom;
-import com.mygroup5people.jxnufake.entity.Course;
-import com.mygroup5people.jxnufake.entity.Semester;
-import com.mygroup5people.jxnufake.entity.Teacher;
-import com.mygroup5people.jxnufake.exception.BusinessException;
-import com.mygroup5people.jxnufake.mapper.CourseMapper;
-import com.mygroup5people.jxnufake.mapper.OfferingMapper;
-import com.mygroup5people.jxnufake.mapper.ReferenceMapper;
-import com.mygroup5people.jxnufake.mapper.TeacherMapper;
-import com.mygroup5people.jxnufake.vo.OfferingVO;
-import com.mygroup5people.jxnufake.vo.StudentSummaryVO;
+import com.sf110.jxnufake.dto.OfferingRequest;
+import com.sf110.jxnufake.dto.ScheduleRequest;
+import com.sf110.jxnufake.entity.*;
+import com.sf110.jxnufake.exception.BusinessException;
+import com.sf110.jxnufake.mapper.CourseMapper;
+import com.sf110.jxnufake.mapper.OfferingMapper;
+import com.sf110.jxnufake.mapper.ReferenceMapper;
+import com.sf110.jxnufake.mapper.TeacherMapper;
+import com.sf110.jxnufake.vo.OfferingVO;
+import com.sf110.jxnufake.vo.StudentSummaryVO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -72,7 +67,7 @@ class OfferingServiceImplTest {
         lenient().when(referenceMapper.selectClassroomById(5)).thenReturn(classroom);
 
         lenient().doAnswer(invocation -> {
-            invocation.<com.mygroup5people.jxnufake.entity.CourseOffering>getArgument(0).setId(12);
+            invocation.<CourseOffering>getArgument(0).setId(12);
             return null;
         }).when(offeringMapper).insertOffering(any());
         OfferingVO saved = new OfferingVO();

@@ -1,7 +1,7 @@
-package com.mygroup5people.jxnufake.service.impl;
+package com.sf110.jxnufake.service.impl;
 
-import com.mygroup5people.jxnufake.exception.BusinessException;
-import com.mygroup5people.jxnufake.mapper.CourseMapper;
+import com.sf110.jxnufake.exception.BusinessException;
+import com.sf110.jxnufake.mapper.CourseMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

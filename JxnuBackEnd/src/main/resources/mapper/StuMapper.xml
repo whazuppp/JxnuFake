@@ -2,13 +2,13 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.mygroup5people.jxnufake.mapper.StuMapper">
+<mapper namespace="com.sf110.jxnufake.mapper.StuMapper">
 
     <sql id="stuColumns">
         id, username, password, name, gender, image, entrydate, stu_id, create_time, update_time
     </sql>
 
-    <select id="getByUsernameAndPassword" resultType="com.mygroup5people.jxnufake.pojo.Stu">
+    <select id="getByUsernameAndPassword" resultType="com.sf110.jxnufake.pojo.Stu">
         select
         <include refid="stuColumns"/>
         from jxnu.student
@@ -16,19 +16,51 @@
           and password = #{password}
     </select>
 
-    <select id="getById" resultType="com.mygroup5people.jxnufake.pojo.Stu">
+    <select id="getById" resultType="com.sf110.jxnufake.pojo.Stu">
         select
         <include refid="stuColumns"/>
         from student
         where id = #{id}
     </select>
 
-    <select id="getInfoById" resultType="com.mygroup5people.jxnufake.vo.StudentInfoVO">
+    <select id="getInfoById" resultType="com.sf110.jxnufake.vo.StudentInfoVO">
         select s.id, s.username, s.name, s.gender, s.image, s.entrydate,
                s.stu_id, s.class_id, ac.class_name
         from student s
         join administrative_class ac on ac.id = s.class_id
         where s.id = #{id}
+    </select>
+
+    <select id="list" resultType="com.sf110.jxnufake.vo.StudentSummaryVO">
+        select s.id,
+               s.stu_id as studentNo,
+               s.name,
+               s.gender,
+               ac.class_name as className,
+               s.image
+        from student s
+        left join administrative_class ac on ac.id = s.class_id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="field == 'stuId'">
+                        and s.stu_id
+                        <choose>
+                            <when test="exact">= #{keyword}</when>
+                            <otherwise>like concat('%', #{keyword}, '%')</otherwise>
+                        </choose>
+                    </when>
+                    <otherwise>
+                        and s.name
+                        <choose>
+                            <when test="exact">= #{keyword}</when>
+                            <otherwise>like concat('%', #{keyword}, '%')</otherwise>
+                        </choose>
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+        order by s.stu_id
     </select>
 
     <update id="updateImageById">

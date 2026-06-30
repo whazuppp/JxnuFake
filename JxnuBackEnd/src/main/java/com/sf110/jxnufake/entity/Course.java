@@ -1,4 +1,4 @@
-package com.mygroup5people.jxnufake.entity;
+package com.sf110.jxnufake.entity;
 
 import lombok.Data;
 

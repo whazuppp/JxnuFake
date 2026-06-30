@@ -1,6 +1,6 @@
 USE jxnu;
 
--- 将现有账号加入 2025-2026 学年的全部演示开课班，保留账号本身不变。
+-- 将所有现有学生加入2025-2026两个学期的全部开课班，保留账号本身不变。
 INSERT INTO student_course (student_id, offering_id, score, create_time, update_time)
 SELECT s.id, o.id, NULL, NOW(), NOW()
 FROM student s

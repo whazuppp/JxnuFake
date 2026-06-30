@@ -1,4 +1,4 @@
-package com.mygroup5people.jxnufake.dto;
+package com.sf110.jxnufake.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

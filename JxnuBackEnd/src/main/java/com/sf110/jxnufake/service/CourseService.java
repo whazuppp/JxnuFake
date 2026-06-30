@@ -1,7 +1,7 @@
-package com.mygroup5people.jxnufake.service;
+package com.sf110.jxnufake.service;
 
-import com.mygroup5people.jxnufake.dto.CourseRequest;
-import com.mygroup5people.jxnufake.entity.Course;
+import com.sf110.jxnufake.dto.CourseRequest;
+import com.sf110.jxnufake.entity.Course;
 
 import java.util.List;
 

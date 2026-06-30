@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.mygroup5people.jxnufake.mapper.CourseMapper">
+<mapper namespace="com.sf110.jxnufake.mapper.CourseMapper">
     <sql id="columns">
         id, course_code, name, course_type, credit, weekly_periods, create_time, update_time
     </sql>
 
-    <select id="list" resultType="com.mygroup5people.jxnufake.entity.Course">
+    <select id="list" resultType="com.sf110.jxnufake.entity.Course">
         select <include refid="columns"/> from course
         <where>
             <if test="courseCode != null and courseCode != ''">
@@ -22,7 +22,7 @@
         order by course_code
     </select>
 
-    <select id="selectById" resultType="com.mygroup5people.jxnufake.entity.Course">
+    <select id="selectById" resultType="com.sf110.jxnufake.entity.Course">
         select <include refid="columns"/> from course where id = #{id}
     </select>
 

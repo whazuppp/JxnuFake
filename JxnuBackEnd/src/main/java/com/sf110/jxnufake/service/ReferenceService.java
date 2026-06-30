@@ -1,9 +1,9 @@
-package com.mygroup5people.jxnufake.service;
+package com.sf110.jxnufake.service;
 
-import com.mygroup5people.jxnufake.entity.AdministrativeClass;
-import com.mygroup5people.jxnufake.entity.ClassPeriod;
-import com.mygroup5people.jxnufake.entity.Classroom;
-import com.mygroup5people.jxnufake.entity.Semester;
+import com.sf110.jxnufake.entity.AdministrativeClass;
+import com.sf110.jxnufake.entity.ClassPeriod;
+import com.sf110.jxnufake.entity.Classroom;
+import com.sf110.jxnufake.entity.Semester;
 
 import java.util.List;
 

@@ -1,21 +1,22 @@
-package com.mygroup5people.jxnufake.service.impl;
+package com.sf110.jxnufake.service.impl;
 
-import com.mygroup5people.jxnufake.entity.Semester;
-import com.mygroup5people.jxnufake.exception.BusinessException;
-import com.mygroup5people.jxnufake.mapper.OfferingMapper;
-import com.mygroup5people.jxnufake.mapper.ReferenceMapper;
-import com.mygroup5people.jxnufake.mapper.StuMapper;
-import com.mygroup5people.jxnufake.mapper.StudentCourseMapper;
-import com.mygroup5people.jxnufake.service.StudentCourseService;
-import com.mygroup5people.jxnufake.vo.OfferingVO;
-import com.mygroup5people.jxnufake.vo.StudentInfoVO;
-import com.mygroup5people.jxnufake.vo.TimetableVO;
+import com.sf110.jxnufake.entity.Semester;
+import com.sf110.jxnufake.exception.BusinessException;
+import com.sf110.jxnufake.mapper.OfferingMapper;
+import com.sf110.jxnufake.mapper.ReferenceMapper;
+import com.sf110.jxnufake.mapper.StuMapper;
+import com.sf110.jxnufake.mapper.StudentCourseMapper;
+import com.sf110.jxnufake.service.StudentCourseService;
+import com.sf110.jxnufake.vo.OfferingVO;
+import com.sf110.jxnufake.vo.StudentInfoVO;
+import com.sf110.jxnufake.vo.TimetableVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -38,6 +39,14 @@ public class StudentCourseServiceImpl implements StudentCourseService {
 
         if (offering == null) {
             throw new BusinessException("开课班不存在");
+        }
+
+        StudentInfoVO student = stuMapper.getInfoById(studentId);
+        if (student == null) {
+            throw new BusinessException("学生不存在");
+        }
+        if (!Objects.equals(student.classId(), offering.getClassId())) {
+            throw new BusinessException("所选课程与班级不匹配");
         }
 
         if (studentCourseMapper.countSelectedOffering(studentId, offeringId) > 0) {

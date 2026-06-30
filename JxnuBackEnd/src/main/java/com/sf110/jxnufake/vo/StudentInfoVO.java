@@ -1,4 +1,4 @@
-package com.mygroup5people.jxnufake.vo;
+package com.sf110.jxnufake.vo;
 
 import java.time.LocalDate;
 

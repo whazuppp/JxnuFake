@@ -1,6 +1,6 @@
-package com.mygroup5people.jxnufake.utils;
+package com.sf110.jxnufake.utils;
 
-import com.mygroup5people.jxnufake.exception.BusinessException;
+import com.sf110.jxnufake.exception.BusinessException;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 

@@ -1,172 +1,238 @@
 <template>
   <section class="course-select-page">
-    <header class="page-header">
-      <div>
-        <h2>学生网上选课</h2>
-        <p>可切换第一学期或第二学期，查看对应学期的可选开课班并完成选课、退课。</p>
+    <!-- 选课系统入口页 -->
+    <div v-if="!entered" class="gateway-page">
+      <div class="brand-bar">
+        <div class="brand-logo">JXNU</div>
+        <h1>江西师范大学&nbsp;&nbsp;选课系统</h1>
       </div>
-      <el-button type="primary" plain :loading="loading" @click="loadRows">刷新</el-button>
-    </header>
 
-    <el-card class="filter-card" shadow="never">
-      <el-form :inline="true" :model="filters" label-width="72px">
-        <el-form-item label="学期">
-          <el-select
-            v-model="filters.semesterId"
-            placeholder="请选择学期"
-            class="semester-select"
-            @change="loadRows"
-          >
-            <el-option
-              v-for="semester in semesters"
-              :key="semester.id"
-              :label="semester.name"
-              :value="semester.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="课程名称">
-          <el-input
-            v-model.trim="filters.courseName"
-            clearable
-            placeholder="请输入课程名称"
-            @keyup.enter="loadRows"
-            @clear="loadRows"
-          />
-        </el-form-item>
-        <el-form-item label="教师">
-          <el-input
-            v-model.trim="filters.teacherName"
-            clearable
-            placeholder="请输入教师姓名"
-            @keyup.enter="loadRows"
-            @clear="loadRows"
-          />
-        </el-form-item>
-        <el-form-item label="班级">
-          <el-select
-            v-model="filters.classId"
-            clearable
-            filterable
-            placeholder="全部班级"
-            class="class-select"
-            @change="loadRows"
-            @clear="loadRows"
-          >
-            <el-option
-              v-for="clazz in classes"
-              :key="clazz.id"
-              :label="clazz.className"
-              :value="clazz.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" :loading="loading" @click="loadRows">查询</el-button>
-          <el-button @click="resetFilters">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+      <div class="gateway-card">
+      <div class="open-time-box">
+      <p>开放时间：{{ todayStartTime }} 至 {{ todayEndTime }}</p>
+      <p>{{ systemStatus }}</p>
+      </div>
 
-    <div class="summary-bar">
-      <span>当前学期：<strong>{{ currentSemesterName }}</strong></span>
-      <span>可选课程：<strong>{{ rows.length }}</strong> 门</span>
-      <span>已选课程：<strong>{{ selectedCount }}</strong> 门</span>
+        <div class="login-box">
+          <el-button type="warning" size="large" class="login-btn" @click="enterSelection">
+            统一身份认证系统登录
+          </el-button>
+
+          <div class="helper-links">
+            <a href="javascript:void(0)" @click="showConfig">查看配置</a>
+            <a href="javascript:void(0)" @click="checkTime">检查时间</a>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <el-table
-      v-loading="loading"
-      :data="rows"
-      border
-      stripe
-      row-key="id"
-      empty-text="当前学期暂无可选课程"
-      class="selection-table"
-    >
-      <el-table-column prop="courseCode" label="课程号" width="110" />
-      <el-table-column prop="courseName" label="课程名称" min-width="190" show-overflow-tooltip />
-      <el-table-column label="类型" width="90">
-        <template #default="{ row }">{{ courseTypeText(row.courseType) }}</template>
-      </el-table-column>
-      <el-table-column prop="credit" label="学分" width="80" />
-      <el-table-column prop="weeklyPeriods" label="周课时" width="90" />
-      <el-table-column prop="teacherName" label="任课教师" width="110" />
-      <el-table-column prop="className" label="开课班级" min-width="170" show-overflow-tooltip />
-      <el-table-column label="上课时间地点" min-width="260">
-        <template #default="{ row }">{{ scheduleText(row.schedules) }}</template>
-      </el-table-column>
-      <el-table-column label="容量" width="110">
-        <template #default="{ row }">{{ row.studentCount || 0 }}/{{ row.capacity }}</template>
-      </el-table-column>
-      <el-table-column label="状态" width="95">
-        <template #default="{ row }">
-          <el-tag v-if="row.selected" type="success">已选</el-tag>
-          <el-tag v-else-if="row.remaining <= 0" type="danger">已满</el-tag>
-          <el-tag v-else type="info">可选</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" fixed="right" width="110">
-        <template #default="{ row }">
-          <el-button
-            v-if="row.selected"
-            link
-            type="danger"
-            :loading="operatingId === row.id"
-            @click="withdraw(row)"
+    <!-- 登录后进入真正选课页 -->
+    <div v-else class="selection-page">
+      <header class="page-header">
+        <div>
+          <h2>学生选课</h2>
+        </div>
+
+        <div class="header-actions">
+          <el-button plain @click="entered = false">返回选课入口</el-button>
+
+          <el-select
+            v-model="semesterId"
+            placeholder="请选择学期"
+            class="semester-select"
+            disabled
+            @change="loadData"
           >
-            退课
-          </el-button>
-          <el-button
-            v-else
-            link
-            type="primary"
-            :disabled="row.remaining <= 0"
-            :loading="operatingId === row.id"
-            @click="select(row)"
-          >
-            选课
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+            <el-option
+              v-for="item in semesters"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </div>
+      </header>
+
+      <div class="status-bar">
+        <span>当前学期：{{ currentSemesterName }}</span>
+        <span>开课班数量：{{ offerings.length }}</span>
+        <span>已选课程：{{ selectedIds.size }}</span>
+      </div>
+
+      <el-table
+        v-loading="loading"
+        :data="offerings"
+        border
+        stripe
+        empty-text="该学期暂无可选课程"
+      >
+        <el-table-column prop="courseCode" label="课程号" width="110" />
+        <el-table-column prop="courseName" label="课程名称" min-width="190" />
+        <el-table-column label="课程类型" width="110">
+          <template #default="{ row }">
+            {{ courseTypeName(row.courseType) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="credit" label="学分" width="80" />
+        <el-table-column prop="weeklyPeriods" label="周学时" width="90" />
+        <el-table-column prop="teacherName" label="任课教师" width="110" />
+        <el-table-column prop="className" label="开课班级" min-width="170" />
+        <el-table-column label="上课时间地点" min-width="260">
+          <template #default="{ row }">
+            {{ formatSchedules(row.schedules) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="容量" width="110">
+          <template #default="{ row }">
+            {{ row.studentCount || 0 }}/{{ row.capacity }}
+          </template>
+        </el-table-column>
+        <el-table-column label="状态" width="90">
+          <template #default="{ row }">
+            <el-tag v-if="selectedIds.has(row.id)" type="success">已选</el-tag>
+            <el-tag v-else-if="isFull(row)" type="danger">已满</el-tag>
+            <el-tag v-else type="info">未选</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="130" fixed="right">
+          <template #default="{ row }">
+            <el-button
+              v-if="!selectedIds.has(row.id)"
+              type="primary"
+              link
+              :disabled="isFull(row)"
+              @click="selectCourse(row.id)"
+            >
+              选课
+            </el-button>
+
+            <el-button
+              v-else
+              type="danger"
+              link
+              @click="withdrawCourse(row.id)"
+            >
+              退课
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
   </section>
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { querySemestersApi } from '@/api/reference'
 import { queryOfferingsApi } from '@/api/offering'
-import { queryClassesApi, querySemestersApi } from '@/api/reference'
 import {
   querySelectionsApi,
   selectOfferingApi,
   withdrawOfferingApi
 } from '@/api/studentCourse'
-import { businessMessage, toOfferingParams, toSelectionRows } from '@/utils/offeringState'
+import { businessMessage, selectedOfferingIds } from '@/utils/offeringState'
+import { selectNextSemester } from '@/utils/semesterSchedule'
 
-const weekdays = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']
-
+const entered = ref(false)
 const semesters = ref([])
-const classes = ref([])
+const semesterId = ref()
 const offerings = ref([])
 const selections = ref([])
 const loading = ref(false)
-const operatingId = ref(null)
 
-const filters = reactive({
-  semesterId: undefined,
-  courseName: '',
-  teacherName: '',
-  classId: null
-})
+const selectedIds = computed(() => selectedOfferingIds(selections.value))
 
-const rows = computed(() => toSelectionRows(offerings.value, selections.value))
-const selectedCount = computed(() => rows.value.filter(row => row.selected).length)
 const currentSemesterName = computed(() => {
-  return semesters.value.find(item => item.id === filters.semesterId)?.name || '-'
+  return semesters.value.find(item => item.id === semesterId.value)?.name || '-'
 })
 
-function courseTypeText(type) {
+async function enterSelection() {
+  entered.value = true
+  if (semesterId.value) {
+    await loadData()
+  }
+}
+
+async function loadSemesters() {
+  const result = await querySemestersApi()
+  if (result.code !== 1) {
+    throw new Error(result.msg || '学期加载失败')
+  }
+
+  semesters.value = selectNextSemester(result.data || [])
+  semesterId.value = semesters.value[0]?.id
+
+  if (!semesterId.value) {
+    throw new Error('未找到2026-2027学年第1学期')
+  }
+
+  if (semesterId.value) {
+    await loadData()
+  }
+}
+
+async function loadData() {
+  if (!semesterId.value) return
+
+  loading.value = true
+  try {
+    const [offeringsResult, selectionsResult] = await Promise.all([
+      queryOfferingsApi({ semesterId: semesterId.value }),
+      querySelectionsApi(semesterId.value)
+    ])
+
+    if (offeringsResult.code !== 1) {
+      throw new Error(offeringsResult.msg || '开课班加载失败')
+    }
+    if (selectionsResult.code !== 1) {
+      throw new Error(selectionsResult.msg || '已选课程加载失败')
+    }
+
+    offerings.value = offeringsResult.data || []
+    selections.value = selectionsResult.data || []
+  } catch (error) {
+    offerings.value = []
+    selections.value = []
+    ElMessage.error(error.message || '选课页面加载失败')
+  } finally {
+    loading.value = false
+  }
+}
+
+async function selectCourse(id) {
+  try {
+    const result = await selectOfferingApi(id)
+    if (result.code !== 1) {
+      throw new Error(businessMessage(result, '选课失败'))
+    }
+
+    ElMessage.success('选课成功')
+    await loadData()
+  } catch (error) {
+    ElMessage.error(error.message || '选课失败')
+  }
+}
+
+async function withdrawCourse(id) {
+  try {
+    const result = await withdrawOfferingApi(id)
+    if (result.code !== 1) {
+      throw new Error(businessMessage(result, '退课失败'))
+    }
+
+    ElMessage.success('退课成功')
+    await loadData()
+  } catch (error) {
+    ElMessage.error(error.message || '退课失败')
+  }
+}
+
+function isFull(row) {
+  return Number(row.studentCount || 0) >= Number(row.capacity || 0)
+}
+
+function courseTypeName(type) {
   const map = {
     THEORY: '理论',
     EXPERIMENT: '实验',
@@ -175,174 +241,243 @@ function courseTypeText(type) {
   return map[type] || type || '-'
 }
 
-function scheduleText(schedules = []) {
-  if (!schedules.length) return '未排课'
-  return schedules.map(schedule => {
-    const day = weekdays[schedule.weekday - 1] || `星期${schedule.weekday}`
-    const room = `${schedule.building || ''}${schedule.roomNo || ''}` || '教室待定'
-    return `${day} 第${schedule.startPeriod}-${schedule.endPeriod}节 ${room}`
-  }).join('；')
+const todayStartTime = computed(() => `${formatToday()} 00:00:00`)
+const todayEndTime = computed(() => `${formatToday()} 24:00:00`)
+
+const systemStatus = computed(() => {
+  return '系统开放中'
+})
+
+function formatToday() {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
-async function loadOptions() {
-  const [semesterResult, classResult] = await Promise.all([
-    querySemestersApi(),
-    queryClassesApi()
-  ])
-  if (semesterResult.code !== 1) throw new Error(semesterResult.msg || '学期加载失败')
-  if (classResult.code !== 1) throw new Error(classResult.msg || '班级加载失败')
-  semesters.value = semesterResult.data || []
-  classes.value = classResult.data || []
-  filters.semesterId = semesters.value.find(item => item.current)?.id || semesters.value[0]?.id
-}
+function formatSchedules(schedules = []) {
+  if (!schedules.length) return '暂未排课'
 
-async function loadRows() {
-  if (!filters.semesterId) {
-    offerings.value = []
-    selections.value = []
-    return
+  const weekdayNames = {
+    1: '周一',
+    2: '周二',
+    3: '周三',
+    4: '周四',
+    5: '周五',
+    6: '周六',
+    7: '周日'
   }
 
-  loading.value = true
-  try {
-    const params = toOfferingParams(filters)
-    const [offeringResult, selectionResult] = await Promise.all([
-      queryOfferingsApi(params),
-      querySelectionsApi(filters.semesterId)
-    ])
-    if (offeringResult.code !== 1) throw new Error(offeringResult.msg || '开课班加载失败')
-    if (selectionResult.code !== 1) throw new Error(selectionResult.msg || '已选课程加载失败')
-    offerings.value = offeringResult.data || []
-    selections.value = selectionResult.data || []
-  } catch (error) {
-    offerings.value = []
-    selections.value = []
-    ElMessage.error(error.message || '选课数据加载失败')
-  } finally {
-    loading.value = false
-  }
+  return schedules
+    .map(item => {
+      const day = weekdayNames[item.weekday] || `周${item.weekday}`
+      const room = `${item.building || ''}${item.roomNo || ''}` || '教室待定'
+      return `${day} 第${item.startPeriod}-${item.endPeriod}节 ${room}`
+    })
+    .join('；')
 }
 
-function resetFilters() {
-  filters.courseName = ''
-  filters.teacherName = ''
-  filters.classId = null
-  loadRows()
+function showConfig() {
+  ElMessage.info('当前为选课系统演示配置')
 }
 
-async function select(row) {
-  operatingId.value = row.id
-  try {
-    const result = await selectOfferingApi(row.id)
-    if (result.code !== 1) throw result
-    ElMessage.success('选课成功')
-    await loadRows()
-  } catch (error) {
-    ElMessage.error(businessMessage(error, '选课失败'))
-  } finally {
-    operatingId.value = null
-  }
+function checkTime() {
+  ElMessage.info('当前时间检查通过，可继续进入选课页面')
 }
 
-async function withdraw(row) {
-  operatingId.value = row.id
-  try {
-    const result = await withdrawOfferingApi(row.id)
-    if (result.code !== 1) throw result
-    ElMessage.success('退课成功')
-    await loadRows()
-  } catch (error) {
-    ElMessage.error(businessMessage(error, '退课失败'))
-  } finally {
-    operatingId.value = null
-  }
-}
+
 
 onMounted(async () => {
   try {
-    await loadOptions()
-    await loadRows()
+    await loadSemesters()
   } catch (error) {
-    ElMessage.error(error.message || '选课页面初始化失败')
+    ElMessage.error(error.message || '学期加载失败')
   }
 })
 </script>
 
 <style scoped>
 .course-select-page {
-  min-height: 600px;
-  padding: 24px;
+  min-height: 640px;
   color: #253242;
+}
+
+.gateway-page {
+  position: relative;
+  min-height: 640px;
+  padding: 24px;
+  overflow: hidden;
+  background:
+    linear-gradient(rgba(250, 250, 235, 0.58), rgba(250, 250, 235, 0.58)),
+    url('@/assets/login-bg.png') center / cover no-repeat;
+}
+
+.gateway-page::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  pointer-events: none;
+  backdrop-filter: blur(1px);
+}
+
+.brand-bar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: #067346;
+  font-family: "Microsoft YaHei", sans-serif;
+}
+
+.brand-logo {
+  display: flex;
+  width: 54px;
+  height: 54px;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #087348;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.74);
+  color: #087348;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.brand-bar h1 {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 4px;
+}
+
+.gateway-card {
+  position: relative;
+  z-index: 1;
+  width: min(586px, calc(100vw - 56px));
+  margin: 150px auto 0;
+  padding: 28px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 8px 28px rgba(40, 62, 80, 0.16);
+}
+
+.open-time-box {
+  padding: 14px 18px;
+  border: 1px solid #dea2c4;
+  border-radius: 5px;
+  background: #e6b3cf;
+  color: #8a1f59;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+.open-time-box p {
+  margin: 0;
+}
+
+.login-box {
+  margin-top: 26px;
+  padding: 30px 20px;
+  border: 1px solid #dcdfe6;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.login-btn {
+  padding: 11px 22px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.helper-links {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.helper-links a {
+  color: #e95f2c;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.helper-links a:hover {
+  text-decoration: underline;
+}
+
+.selection-page {
+  min-height: 640px;
+  padding: 24px;
   background: #fff;
 }
 
 .page-header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 20px;
-  margin-bottom: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #dfe6ec;
 }
 
-h2 {
-  margin: 0 0 6px;
+.page-header h2 {
+  margin: 0;
   color: #172838;
   font-size: 24px;
 }
 
 .page-header p {
-  margin: 0;
-  color: #667789;
-  font-size: 13px;
+  margin: 8px 0 0;
+  color: #6b7785;
 }
 
-.filter-card {
-  margin-bottom: 12px;
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .semester-select {
-  width: 240px;
+  width: 250px;
 }
 
-.class-select {
-  width: 220px;
-}
-
-.summary-bar {
+.status-bar {
   display: flex;
   flex-wrap: wrap;
   gap: 12px 32px;
-  margin-bottom: 12px;
-  padding: 10px 14px;
-  border: 1px solid #dfe6ec;
-  border-radius: 8px;
-  background: #f7fafc;
-  color: #44566c;
-  font-size: 13px;
-}
-
-.summary-bar strong {
-  color: #b4232a;
-  font-weight: 600;
-}
-
-.selection-table {
-  width: 100%;
+  margin: 16px 0;
+  padding: 12px 16px;
+  border: 1px solid #d8e5ef;
+  border-radius: 6px;
+  background: #f6fbff;
+  color: #39556e;
 }
 
 @media (max-width: 760px) {
-  .course-select-page {
-    padding: 16px 10px;
+  .brand-bar h1 {
+    font-size: 24px;
+  }
+
+  .gateway-card {
+    margin-top: 90px;
   }
 
   .page-header {
-    align-items: flex-start;
+    align-items: stretch;
     flex-direction: column;
   }
 
-  .semester-select,
-  .class-select {
-    width: min(240px, 72vw);
+  .header-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .semester-select {
+    width: 100%;
   }
 }
 </style>

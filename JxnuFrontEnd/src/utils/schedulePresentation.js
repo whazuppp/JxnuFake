@@ -9,16 +9,16 @@ export const DEFAULT_AVATAR =
   )
 
 export function resolveAvatar(image) {
-  return typeof image === 'string' && image.trim() ? image.trim() : DEFAULT_AVATAR
+  return typeof image === 'string' && image.trim() ? image : DEFAULT_AVATAR
 }
 
 export function resolveStudentAvatar(student = {}) {
   return resolveAvatar(
-    student.image ??
-    student.avatar ??
-    student.avatarUrl ??
-    student.photo ??
-    student.photoUrl ??
+    student.image ||
+    student.avatar ||
+    student.avatarUrl ||
+    student.photo ||
+    student.photoUrl ||
     student.headImg
   )
 }
@@ -26,9 +26,9 @@ export function resolveStudentAvatar(student = {}) {
 export function toRosterCards(students = []) {
   return students.map((student, index) => ({
     index: index + 1,
-    studentNo: student.studentNo ?? student.stuId ?? student.stu_id ?? '-',
-    name: student.name ?? '-',
-    className: student.className ?? student.class_name ?? '-',
+    studentNo: student.studentNo,
+    name: student.name,
+    className: student.className,
     image: resolveStudentAvatar(student)
   }))
 }

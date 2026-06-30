@@ -1,7 +1,8 @@
-package com.mygroup5people.jxnufake.service.impl;
+package com.sf110.jxnufake.service.impl;
 
-import com.mygroup5people.jxnufake.exception.BusinessException;
-import com.mygroup5people.jxnufake.mapper.TeacherMapper;
+import com.sf110.jxnufake.exception.BusinessException;
+import com.sf110.jxnufake.entity.Teacher;
+import com.sf110.jxnufake.mapper.TeacherMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,5 +32,18 @@ class TeacherServiceImplTest {
 
         assertEquals("教师已被开课班引用，不能删除", exception.getMessage());
         verify(teacherMapper, never()).delete(3);
+    }
+
+    @Test
+    void teacherListPassesFilterAndFuzzyModeToMapper() {
+        Teacher expectedTeacher = new Teacher();
+        expectedTeacher.setTeacherNo("T2026");
+        var expected = java.util.List.of(expectedTeacher);
+        when(teacherMapper.list("teacherNo", "T2026", false)).thenReturn(expected);
+
+        var actual = teacherService.list("teacherNo", "T2026", false);
+
+        assertEquals(expected, actual);
+        verify(teacherMapper).list("teacherNo", "T2026", false);
     }
 }

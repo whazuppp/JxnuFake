@@ -1,4 +1,4 @@
-package com.mygroup5people.jxnufake;
+package com.sf110.jxnufake;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

@@ -92,6 +92,7 @@ import { querySemestersApi } from '@/api/reference'
 import { queryTimetableApi } from '@/api/studentCourse'
 import { queryOfferingStudentsApi } from '@/api/offering'
 import { buildTimetableGrid, normalizeCourseRows } from '@/utils/timetable'
+import { coursesForSemester } from '@/utils/semesterSchedule'
 
 const router = useRouter()
 const weekdays = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']
@@ -104,7 +105,12 @@ const rosterLoading = ref(false)
 const students = ref([])
 const activeCourse = ref(null)
 
-const courses = computed(() => timetable.value?.courses || [])
+const activeSemester = computed(() =>
+  semesters.value.find(item => item.id === semesterId.value)
+)
+const courses = computed(() =>
+  coursesForSemester(activeSemester.value, timetable.value?.courses || [])
+)
 const courseRows = computed(() => normalizeCourseRows(courses.value))
 const grid = computed(() => buildTimetableGrid(courses.value))
 
@@ -160,7 +166,13 @@ function openDiscussion(offering) {
 }
 
 function openEvaluation(offering) {
-  router.push({ path: '/studycenter/evaluation', query: { offeringId: offering.id } })
+  router.push({
+    path: '/studenthome/judge',
+    query: {
+      offeringId: offering.id,
+      semesterId: offering.semesterId || semesterId.value
+    }
+  })
 }
 
 onMounted(async () => {

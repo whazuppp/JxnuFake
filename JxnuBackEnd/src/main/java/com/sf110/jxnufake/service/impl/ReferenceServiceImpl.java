@@ -1,8 +1,12 @@
-package com.mygroup5people.jxnufake.service.impl;
+package com.sf110.jxnufake.service.impl;
 
-import com.mygroup5people.jxnufake.entity.*;
-import com.mygroup5people.jxnufake.mapper.ReferenceMapper;
-import com.mygroup5people.jxnufake.service.ReferenceService;
+import com.sf110.jxnufake.entity.*;
+import com.sf110.jxnufake.entity.AdministrativeClass;
+import com.sf110.jxnufake.entity.ClassPeriod;
+import com.sf110.jxnufake.entity.Classroom;
+import com.sf110.jxnufake.entity.Semester;
+import com.sf110.jxnufake.mapper.ReferenceMapper;
+import com.sf110.jxnufake.service.ReferenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

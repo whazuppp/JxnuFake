@@ -1,10 +1,10 @@
-package com.mygroup5people.jxnufake.service.impl;
+package com.sf110.jxnufake.service.impl;
 
-import com.mygroup5people.jxnufake.dto.TeacherRequest;
-import com.mygroup5people.jxnufake.entity.Teacher;
-import com.mygroup5people.jxnufake.exception.BusinessException;
-import com.mygroup5people.jxnufake.mapper.TeacherMapper;
-import com.mygroup5people.jxnufake.service.TeacherService;
+import com.sf110.jxnufake.dto.TeacherRequest;
+import com.sf110.jxnufake.entity.Teacher;
+import com.sf110.jxnufake.exception.BusinessException;
+import com.sf110.jxnufake.mapper.TeacherMapper;
+import com.sf110.jxnufake.service.TeacherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,8 +19,8 @@ public class TeacherServiceImpl implements TeacherService {
     private final TeacherMapper teacherMapper;
 
     @Override
-    public List<Teacher> list(Teacher filter) {
-        return teacherMapper.list(filter);
+    public List<Teacher> list(String field, String keyword, boolean exact) {
+        return teacherMapper.list(field, keyword, exact);
     }
 
     @Override

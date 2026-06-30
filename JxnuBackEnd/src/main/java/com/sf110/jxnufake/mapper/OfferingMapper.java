@@ -1,10 +1,10 @@
-package com.mygroup5people.jxnufake.mapper;
+package com.sf110.jxnufake.mapper;
 
-import com.mygroup5people.jxnufake.entity.CourseOffering;
-import com.mygroup5people.jxnufake.entity.CourseSchedule;
-import com.mygroup5people.jxnufake.vo.OfferingVO;
-import com.mygroup5people.jxnufake.vo.ScheduleVO;
-import com.mygroup5people.jxnufake.vo.StudentSummaryVO;
+import com.sf110.jxnufake.entity.CourseOffering;
+import com.sf110.jxnufake.entity.CourseSchedule;
+import com.sf110.jxnufake.vo.OfferingVO;
+import com.sf110.jxnufake.vo.ScheduleVO;
+import com.sf110.jxnufake.vo.StudentSummaryVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;

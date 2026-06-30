@@ -1,6 +1,6 @@
-package com.mygroup5people.jxnufake.Config;
+package com.sf110.jxnufake.Config;
 
-import com.mygroup5people.jxnufake.Interceptor.LoginCheckInterceptor;
+import com.sf110.jxnufake.Interceptor.LoginCheckInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
